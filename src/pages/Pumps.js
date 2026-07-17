@@ -124,8 +124,21 @@ export const Pumps = ({ isDashboard }) => {
   };
 
   const filteredPumps = useMemo(() => {
-    return pumps.filter(pump => {
-      const matchSearch = pump.id.toLowerCase().includes(searchText.toLowerCase());
+    return pumps.filter((pump, index) => {
+      const searchLower = searchText.toLowerCase();
+      const idNum = (index + 1).toString();
+      const statusText = pump.status === 'idle' ? 'đang chờ' : (pump.status === 'lifted' ? 'đã nhắc cò' : 'đang bơm');
+      
+      const matchSearch = 
+        idNum.includes(searchLower) ||
+        pump.id.toLowerCase().includes(searchLower) ||
+        pump.fuelType.toLowerCase().includes(searchLower) ||
+        pump.money.toString().includes(searchLower) ||
+        pump.volume.toString().includes(searchLower) ||
+        pump.price.toString().includes(searchLower) ||
+        pump.serial.toString().includes(searchLower) ||
+        statusText.includes(searchLower);
+
       const matchStatus = statusFilter === 'all' || pump.status === statusFilter;
       const matchFuel = fuelFilter === 'all' || pump.fuelType.includes(fuelFilter);
       return matchSearch && matchStatus && matchFuel;
@@ -157,7 +170,7 @@ export const Pumps = ({ isDashboard }) => {
           <span>Bộ lọc:</span>
         </div>
         <Input
-          placeholder="Tìm mã trụ..."
+          placeholder="Tìm kiếm..."
           prefix={<Search size={16} className="text-gray-400" />}
           className="w-40 dark:bg-gray-900 dark:border-gray-700 dark:text-white"
           value={searchText}

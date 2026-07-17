@@ -12,7 +12,7 @@ const initialPrepaid = [
 
 const initialPostpaid = [
   { id: '1', uid: '1C01BEF5', plate: '51D-11644', totalMoney: 488000, totalVol: 20.803, totalTopup: 0, balance: 0, company: 'Cty Tai Viet', note: '' },
-  { id: '2', uid: '66C01EB7', plate: '51C-77899', totalMoney: 150000, totalVol: 6.394, totalTopup: 0, balance: 0, company: 'Cty Montech', note: '' },
+  { id: '2', uid: '66C01EB7', plate: '51K-78899', totalMoney: 344000, totalVol: 14.665, totalTopup: 0, balance: 0, company: 'Cty Montech', note: '' },
 ];
 
 const formatNum = (num) => num.toLocaleString('vi-VN');

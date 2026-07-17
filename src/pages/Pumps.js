@@ -5,10 +5,10 @@ import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 
 const initialPumps = [
-  { id: 'MT0001', fuelType: 'E10', money: 20000, volume: 0.973, price: 20550, status: 'idle', serial: 113, totalMoney: 25496900, totalCount: 17 },
-  { id: 'MT0002', fuelType: 'E10', money: 60000, volume: 2.919, price: 20550, status: 'idle', serial: 114, totalMoney: 26731467, totalCount: 22 },
-  { id: 'MT0003', fuelType: 'E10', money: 50000, volume: 2.433, price: 20550, status: 'idle', serial: 89, totalMoney: 27966034, totalCount: 27 },
-  { id: 'MT0004', fuelType: 'DO_II', money: 1600000, volume: 68.610, price: 23320, status: 'idle', serial: 111, totalMoney: 29200601, totalCount: 32 },
+  { id: 'MT0001', fuelType: 'Xăng E10 RON95 Mức 3', money: 20000, volume: 0.973, price: 20550, status: 'idle', serial: 113, totalMoney: 25496900, totalCount: 17 },
+  { id: 'MT0002', fuelType: 'Xăng RON 95-III', money: 60000, volume: 2.919, price: 20550, status: 'idle', serial: 114, totalMoney: 26731467, totalCount: 22 },
+  { id: 'MT0003', fuelType: 'Xăng E5 RON 92-II', money: 50000, volume: 2.433, price: 20550, status: 'idle', serial: 89, totalMoney: 27966034, totalCount: 27 },
+  { id: 'MT0004', fuelType: 'Dầu DO 0,05S-II', money: 1600000, volume: 68.610, price: 23320, status: 'idle', serial: 111, totalMoney: 29200601, totalCount: 32 },
 ];
 
 const PumpCard = ({ pump, onOpenDetails }) => {
@@ -180,17 +180,22 @@ export const Pumps = ({ isDashboard }) => {
           onChange={setFuelFilter}
           options={[
             { value: 'all', label: 'Tất cả nhiên liệu' },
-            { value: 'Dầu Điêzen', label: 'Dầu Điêzen' },
-            { value: 'Xăng E10', label: 'Xăng E10' },
+            { value: 'Xăng RON 95-III', label: 'Xăng RON 95-III' },
+            { value: 'Xăng E5 RON 92-II', label: 'Xăng E5 RON 92-II' },
+            { value: 'Dầu hỏa 2-K', label: 'Dầu hỏa 2-K' },
+            { value: 'Dầu DO 0,05S-II', label: 'Dầu DO 0,05S-II' },
+            { value: 'Dầu DO 0,25S', label: 'Dầu DO 0,25S' },
+            { value: 'Dầu DO 0,001S-V', label: 'Dầu DO 0,001S-V' },
+            { value: 'Xăng RON 95-V', label: 'Xăng RON 95-V' },
+            { value: 'Dầu FO 3,5%S', label: 'Dầu FO 3,5%S' },
+            { value: 'Dầu KO', label: 'Dầu KO' },
+            { value: 'Xăng E10 RON95 Mức 3', label: 'Xăng E10 RON95 Mức 3' },
           ]}
         />
       </div>
 
       {/* Pumps Table */}
       <div className="bg-white rounded border border-gray-300 shadow-sm overflow-hidden">
-        <h3 className="text-blue-900 font-bold text-sm uppercase px-2 py-1 border-b border-gray-300 bg-gray-50">
-          TRỤ BƠM
-        </h3>
         <Table 
           dataSource={filteredPumps.map((pump, index) => ({ ...pump, key: pump.id, idNum: index + 1 }))}
           pagination={false}
@@ -200,7 +205,7 @@ export const Pumps = ({ isDashboard }) => {
             { title: 'Vòi', dataIndex: 'idNum', align: 'center' },
             { 
               title: 'Nhiên Liệu', dataIndex: 'fuelType', align: 'center',
-              render: text => <span className={`font-bold ${text.includes('E10') ? 'text-green-600' : 'text-orange-500'}`}>{text.includes('E10') ? 'E10' : 'DO_II'}</span>
+              render: text => <span className={`font-bold ${text.includes('Xăng') ? 'text-green-600' : 'text-orange-500'}`}>{text}</span>
             },
             { title: 'Số Tiền', dataIndex: 'money', align: 'center', render: val => val.toLocaleString('vi-VN') },
             { title: 'Số Lít', dataIndex: 'volume', align: 'center', render: val => val.toFixed(3).replace('.', ',') },
@@ -266,7 +271,7 @@ export const Pumps = ({ isDashboard }) => {
               columns={[
                 { title: 'Vòi', dataIndex: 'id', align: 'center', render: id => parseInt(id.replace('MT', '')) },
                 { title: 'Kết Nối', key: 'status', align: 'center', render: () => <div className="w-3 h-3 bg-green-500 rounded-full mx-auto" /> },
-                { title: 'Nhiên Liệu', dataIndex: 'fuelType', align: 'center', render: f => <span className={f.includes('E10') ? 'text-green-600' : 'text-orange-500'}>{f.includes('E10') ? 'E10' : 'DO_II'}</span> },
+                { title: 'Nhiên Liệu', dataIndex: 'fuelType', align: 'center', render: f => <span className={`font-bold ${f.includes('Xăng') ? 'text-green-600' : 'text-orange-500'}`}>{f}</span> },
                 { title: 'Serial', dataIndex: 'serial', align: 'center' },
                 { title: 'Tổng Số Tiền', dataIndex: 'totalMoney', align: 'center', render: v => v.toLocaleString() },
                 { title: 'Tổng Số Lít', dataIndex: 'volume', align: 'center', render: () => '44,542.126' }, // Mock large volume

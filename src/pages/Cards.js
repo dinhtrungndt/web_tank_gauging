@@ -1,308 +1,238 @@
 import React, { useState } from 'react';
-import { Table, Button, Form, Input, InputNumber, Select, Switch, Row, Col, DatePicker, Card, Divider } from 'antd';
-import { Search, Download, CreditCard } from 'lucide-react';
+import { Button, Input, Form, Select, Switch, Table, Modal } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { ArrowDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const { RangePicker } = DatePicker;
+const { Option } = Select;
 
-// Dữ liệu giả lập
-const initialCards = [
-  { id: '1', uid: '1CBF99F5', licensePlate: '51K-50687', type: 'Trả trước', pumpedMoney: 550000, pumpedVolume: 23.447, totalTopup: 10000000, balance: 9450000, company: 'Cty Montech', note: '', allow: true },
-  { id: '2', uid: '1C01BEF5', licensePlate: '51D-11644', type: 'Trả sau', pumpedMoney: 488000, pumpedVolume: 20.803, totalTopup: 0, balance: 0, company: 'Cty Tai Viet', note: '', allow: true },
-  { id: '3', uid: '66C01EB7', licensePlate: '51C-77899', type: 'Trả sau', pumpedMoney: 150000, pumpedVolume: 6.394, totalTopup: 0, balance: 0, company: 'Cty Montech', note: '', allow: true },
+const mockPrepaid = [
+  { id: '1', uid: '1CBF99F5', plate: '51K-50687', totalMoney: 550000, totalVol: 23.447, totalTopup: 10000000, balance: 9450000, company: 'Cty Montech', note: '' },
 ];
 
+const mockPostpaid = [
+  { id: '1', uid: '1C01BEF5', plate: '51D-11644', totalMoney: 488000, totalVol: 20.803, totalTopup: 0, balance: 0, company: 'Cty Tai Viet', note: '' },
+  { id: '2', uid: '66C01EB7', plate: '51C-77899', totalMoney: 150000, totalVol: 6.394, totalTopup: 0, balance: 0, company: 'Cty Montech', note: '' },
+];
+
+const formatNum = (num) => num.toLocaleString('vi-VN');
+const formatVol = (num) => num.toLocaleString('vi-VN', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+
 export const Cards = () => {
-  const [cards, setCards] = useState(initialCards);
+  const navigate = useNavigate();
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [form] = Form.useForm();
-  
-  // Trạng thái form
-  const [formMode, setFormMode] = useState('Thêm thẻ'); // 'Thêm thẻ' | 'Chỉnh sửa thẻ'
-  const [selectedCardId, setSelectedCardId] = useState(null);
 
-  // Phân loại thẻ
-  const prepaidCards = cards.filter(c => c.type === 'Trả trước');
-  const postpaidCards = cards.filter(c => c.type === 'Trả sau');
-
-  // Xử lý khi Submit Form (Thêm/Sửa/Nạp tiền)
-  const handleSubmitForm = (values) => {
-    if (formMode === 'Thêm thẻ') {
-      const newCard = {
-        id: Date.now().toString(),
-        uid: values.uid,
-        licensePlate: values.licensePlate || '',
-        type: values.type,
-        pumpedMoney: 0,
-        pumpedVolume: 0,
-        totalTopup: values.topup || 0,
-        balance: values.topup || 0,
-        company: values.company || '',
-        note: values.note || '',
-        allow: values.allow !== false,
-      };
-      setCards([...cards, newCard]);
-      toast.success('Đã thêm thẻ mới thành công!');
-    } else {
-      // Chỉnh sửa hoặc nạp tiền
-      setCards(cards.map(c => {
-        if (c.uid === values.uid) {
-          const addedMoney = values.topup || 0;
-          return {
-            ...c,
-            licensePlate: values.licensePlate,
-            type: values.type,
-            company: values.company,
-            note: values.note,
-            allow: values.allow,
-            totalTopup: c.totalTopup + addedMoney,
-            balance: c.balance + addedMoney,
-          };
-        }
-        return c;
-      }));
-      toast.success('Đã cập nhật thông tin thẻ!');
-    }
-    form.resetFields();
-    setFormMode('Thêm thẻ');
+  const handleSearch = () => {
+    toast.success('Đã lọc danh sách thẻ!');
   };
 
-  // Nạp tiền nhanh (gán giá trị vào ô Nạp Thêm Tiền)
-  const handleFastTopupChange = (value) => {
-    if (value) {
-      form.setFieldsValue({ topup: value });
-    }
+  const handleSaveForm = () => {
+    toast.success('Đã lưu thông tin thẻ thành công!');
+    setSettingsModalOpen(false);
   };
 
-  // Chọn thẻ từ bảng để chỉnh sửa
-  const handleSelectCard = (record) => {
-    setFormMode('Chỉnh sửa thẻ');
-    setSelectedCardId(record.id);
-    form.setFieldsValue({
-      action: 'Chỉnh sửa thẻ',
-      uid: record.uid,
-      type: record.type,
-      licensePlate: record.licensePlate,
-      company: record.company,
-      note: record.note,
-      totalTopupDisplay: record.totalTopup,
-      balanceDisplay: record.balance,
-      topup: 0,
-      allow: record.allow,
-    });
-    // Scroll lên form (tuỳ chọn)
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Cột cho bảng
   const columns = [
-    { title: 'STT', key: 'stt', width: 60, align: 'center', render: (_, __, index) => index + 1 },
-    { 
-      title: 'Mã Thẻ', 
-      dataIndex: 'uid', 
-      key: 'uid',
-      render: (text, record) => (
-        <a className="text-blue-600 font-bold font-mono" onClick={() => handleSelectCard(record)}>{text}</a>
-      )
-    },
-    { title: 'Biển Số Xe', dataIndex: 'licensePlate', key: 'licensePlate', align: 'center' },
-    { title: 'Tổng Tiền Đã Bơm', dataIndex: 'pumpedMoney', key: 'pumpedMoney', align: 'right', render: val => val.toLocaleString() },
-    { title: 'Tổng Lít Đã Bơm', dataIndex: 'pumpedVolume', key: 'pumpedVolume', align: 'right', render: val => val.toFixed(3) },
-    { title: 'Tổng Tiền Nạp', dataIndex: 'totalTopup', key: 'totalTopup', align: 'right', render: val => val.toLocaleString() },
-    { title: 'Tiền Dư Còn Lại', dataIndex: 'balance', key: 'balance', align: 'right', render: val => <span className="font-bold text-green-600">{val.toLocaleString()}</span> },
-    { title: 'Tên Công Ty', dataIndex: 'company', key: 'company' },
-    { title: 'Ghi Chú', dataIndex: 'note', key: 'note' },
+    { title: 'STT', dataIndex: 'id', key: 'id', align: 'center', width: 60 },
+    { title: 'Mã Thẻ', dataIndex: 'uid', key: 'uid', align: 'center', render: (val) => <span className="text-blue-500 font-bold">{val}</span> },
+    { title: 'Biển Số Xe', dataIndex: 'plate', key: 'plate', align: 'center' },
+    { title: 'Tổng Tiền Đã Bơm', dataIndex: 'totalMoney', key: 'totalMoney', align: 'center', render: formatNum },
+    { title: 'Tổng Lít Đã Bơm', dataIndex: 'totalVol', key: 'totalVol', align: 'center', render: formatVol },
+    { title: 'Tổng Tiền Nạp Thẻ', dataIndex: 'totalTopup', key: 'totalTopup', align: 'center', render: formatNum },
+    { title: 'Tiền Dư Còn Lại', dataIndex: 'balance', key: 'balance', align: 'center', render: formatNum },
+    { title: 'Tên Công Ty', dataIndex: 'company', key: 'company', align: 'center' },
+    { title: 'Ghi Chú', dataIndex: 'note', key: 'note', align: 'center' },
     { 
       title: 'Tải Về', 
-      key: 'download',
-      align: 'center',
-      render: () => <Button type="text" icon={<Download size={16} className="text-blue-600" />} />
+      key: 'action', 
+      align: 'center', 
+      render: () => (
+        <div className="flex justify-center items-center h-full text-blue-600 cursor-pointer">
+          <ArrowDown size={16} className="stroke-[3px]" />
+        </div>
+      ) 
     },
   ];
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Cài Đặt Thẻ (RFID)</h2>
-          <p className="text-gray-500 dark:text-gray-400">Đăng ký thẻ trả trước/trả sau, nạp tiền và theo dõi công nợ.</p>
+    <div className="flex flex-col bg-gray-50 min-h-screen">
+      <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white shadow-sm mb-4">
+        <div className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2" onClick={() => navigate('/')}>Trang Chủ</div>
+        <div className="flex gap-16 text-sm font-bold text-blue-800">
+          <span className="cursor-pointer hover:underline" onClick={() => setSettingsModalOpen(true)}>Cài Đặt Thẻ</span>
+          <span className="cursor-pointer hover:underline">Tải File</span>
+        </div>
+        <div className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pr-2" onClick={() => navigate('/doi-mat-khau')}>Đổi Mật Khẩu</div>
+      </div>
+
+      <div className="px-4">
+        {/* Search */}
+        <div className="mb-4 text-xs font-bold text-gray-700">
+          <div className="flex gap-4 mb-2">
+            <div className="flex-1 flex flex-col items-center">
+              <span className="mb-1">Từ Ngày</span>
+              <input type="text" defaultValue="160726" className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
+            </div>
+            <div className="flex-1 flex flex-col items-center">
+              <span className="mb-1">Đến Ngày</span>
+              <input type="text" defaultValue="160726" className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
+            </div>
+            <div className="flex-1 flex flex-col items-center">
+              <span className="mb-1">Từ Giờ</span>
+              <input type="text" defaultValue="000000" className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
+            </div>
+            <div className="flex-1 flex flex-col items-center">
+              <span className="mb-1">Đến Giờ</span>
+              <input type="text" defaultValue="235959" className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
+            </div>
+          </div>
+          <div className="flex gap-4 mb-2">
+            <div className="flex-1 flex flex-col items-center">
+              <span className="mb-1">Biển Số Xe</span>
+              <input type="text" placeholder="Nhập số xe..." className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
+            </div>
+            <div className="flex-1 flex flex-col items-center">
+              <span className="mb-1">Tên Công Ty</span>
+              <input type="text" placeholder="Nhập tên..." className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
+            </div>
+          </div>
+          <Button type="primary" className="w-full bg-[#1677ff] font-bold" onClick={handleSearch}>TÌM KIẾM</Button>
+        </div>
+
+        {/* Tables */}
+        <div className="bg-white border border-gray-200 rounded">
+          <div className="text-red-500 font-bold p-2 text-sm">THẺ TRẢ TRƯỚC</div>
+          <Table
+            columns={columns}
+            dataSource={mockPrepaid}
+            pagination={false}
+            size="small"
+            bordered
+            rowClassName="text-xs"
+            components={{ header: { cell: (props) => <th {...props} className="bg-[#0f3460] text-white text-xs font-normal" /> } }}
+            summary={(pageData) => {
+              let totalMoney = 0; let totalVol = 0; let totalTopup = 0; let totalBal = 0;
+              pageData.forEach(({ totalMoney: m, totalVol: v, totalTopup: t, balance: b }) => {
+                totalMoney += m; totalVol += v; totalTopup += t; totalBal += b;
+              });
+              return (
+                <Table.Summary.Row className="font-bold text-xs">
+                  <Table.Summary.Cell index={0} colSpan={3} align="right">Tổng:</Table.Summary.Cell>
+                  <Table.Summary.Cell index={1} align="center">{formatNum(totalMoney)}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={2} align="center">{formatVol(totalVol)}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={3} align="center">{formatNum(totalTopup)}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={4} align="center">{formatNum(totalBal)}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={5} colSpan={3}></Table.Summary.Cell>
+                </Table.Summary.Row>
+              );
+            }}
+          />
+
+          <div className="text-red-500 font-bold p-2 text-sm mt-4">THẺ TRẢ SAU</div>
+          <Table
+            columns={columns}
+            dataSource={mockPostpaid}
+            pagination={false}
+            size="small"
+            bordered
+            rowClassName="text-xs"
+            components={{ header: { cell: (props) => <th {...props} className="bg-[#0f3460] text-white text-xs font-normal" /> } }}
+            summary={(pageData) => {
+              let totalMoney = 0; let totalVol = 0; let totalTopup = 0; let totalBal = 0;
+              pageData.forEach(({ totalMoney: m, totalVol: v, totalTopup: t, balance: b }) => {
+                totalMoney += m; totalVol += v; totalTopup += t; totalBal += b;
+              });
+              return (
+                <Table.Summary.Row className="font-bold text-xs">
+                  <Table.Summary.Cell index={0} colSpan={3} align="right">Tổng:</Table.Summary.Cell>
+                  <Table.Summary.Cell index={1} align="center">{formatNum(totalMoney)}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={2} align="center">{formatVol(totalVol)}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={3} align="center">{totalTopup === 0 ? '0' : formatNum(totalTopup)}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={4} align="center">{totalBal === 0 ? '0' : formatNum(totalBal)}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={5} colSpan={3}></Table.Summary.Cell>
+                </Table.Summary.Row>
+              );
+            }}
+          />
+        </div>
+        
+        <div className="text-center text-gray-500 text-[10px] mt-4 pb-4">
+          Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
         </div>
       </div>
 
-      {/* Bộ lọc tìm kiếm */}
-      <Card className="shadow-sm dark:bg-gray-800 dark:border-gray-700" bodyStyle={{ padding: '16px' }}>
-        <Row gutter={[16, 16]} align="bottom">
-          <Col xs={24} md={6}>
-            <div className="text-xs text-gray-500 mb-1">Thời gian</div>
-            <RangePicker className="w-full" format="DD/MM/YYYY" />
-          </Col>
-          <Col xs={24} md={5}>
-            <div className="text-xs text-gray-500 mb-1">Biển Số Xe</div>
-            <Input placeholder="Nhập số xe..." />
-          </Col>
-          <Col xs={24} md={5}>
-            <div className="text-xs text-gray-500 mb-1">Tên Công Ty</div>
-            <Input placeholder="Nhập tên..." />
-          </Col>
-          <Col xs={24} md={4}>
-            <Button type="primary" className="bg-blue-600 w-full" icon={<Search size={16} />}>
-              TÌM KIẾM
-            </Button>
-          </Col>
-        </Row>
-      </Card>
+      <Modal
+        title={<div className="text-xl font-bold text-[#0f3460] text-center mb-2">Cài Đặt Thẻ</div>}
+        open={settingsModalOpen}
+        onCancel={() => setSettingsModalOpen(false)}
+        footer={null}
+        width={500}
+      >
+        <Form form={form} layout="horizontal" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} onFinish={handleSaveForm}
+          initialValues={{
+            func: 'Thêm thẻ',
+            uid: '66C01EB7',
+            type: 'Trả sau',
+            plate: '51K-78899',
+            company: 'Cty Montech',
+            note: '',
+            topupTotal: '0',
+            balance: '0',
+            addMoney: '0',
+            addQuick: '0',
+            allow: true
+          }}
+        >
+          <Form.Item label={<span className="font-bold text-[#0f3460]">Chức Năng</span>} name="func">
+            <Select>
+              <Option value="Thêm thẻ">Thêm thẻ</Option>
+              <Option value="Cập nhật thẻ">Cập nhật thẻ</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label={<span className="font-bold text-[#0f3460]">Mã Thẻ</span>} name="uid">
+            <Input className="text-center" />
+          </Form.Item>
+          <Form.Item label={<span className="font-bold text-[#0f3460]">Loại Thẻ</span>} name="type">
+            <Select>
+              <Option value="Trả sau">Trả sau</Option>
+              <Option value="Trả trước">Trả trước</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label={<span className="font-bold text-[#0f3460]">Biển Số Xe</span>} name="plate">
+            <Input className="text-center" />
+          </Form.Item>
+          <Form.Item label={<span className="font-bold text-[#0f3460]">Tên Công Ty</span>} name="company">
+            <Input className="text-center font-bold" />
+          </Form.Item>
+          <Form.Item label={<span className="font-bold text-[#0f3460]">Ghi Chú</span>} name="note">
+            <Input className="text-center text-gray-400" placeholder="Nhập ghi chú" />
+          </Form.Item>
+          <Form.Item label={<span className="font-bold text-[#0f3460]">Tổng Tiền Nạp</span>} name="topupTotal">
+            <Input className="text-center bg-gray-100" readOnly />
+          </Form.Item>
+          <Form.Item label={<span className="font-bold text-[#0f3460]">Tiền Dư Còn Lại</span>} name="balance">
+            <Input className="text-center bg-gray-100" readOnly />
+          </Form.Item>
+          <Form.Item label={<span className="font-bold text-[#0f3460]">Nạp Thêm Tiền</span>} name="addMoney">
+            <Input className="text-center" />
+          </Form.Item>
+          <Form.Item label={<span className="font-bold text-[#0f3460]">Nạp Thêm Nhanh</span>} name="addQuick">
+            <Select>
+              <Option value="0">0</Option>
+              <Option value="100000">100.000</Option>
+              <Option value="200000">200.000</Option>
+              <Option value="500000">500.000</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label={<span className="font-bold text-[#0f3460]">Cho Phép</span>} name="allow" valuePropName="checked">
+            <Switch className="bg-gray-300" />
+          </Form.Item>
 
-      <Row gutter={24} className="mt-2">
-        {/* Form Cài Đặt Thẻ (Trái/Giữa) */}
-        <Col xs={24} lg={8}>
-          <Card 
-            title={<span className="flex items-center gap-2"><CreditCard size={18} /> Cài Đặt Thẻ</span>} 
-            className="shadow-sm dark:bg-gray-800 dark:border-gray-700 sticky top-4"
-          >
-            <Form 
-              form={form} 
-              layout="horizontal" 
-              labelCol={{ span: 8 }} 
-              wrapperCol={{ span: 16 }}
-              onFinish={handleSubmitForm}
-              initialValues={{ action: 'Thêm thẻ', type: 'Trả trước', allow: true }}
-              size="middle"
-            >
-              <Form.Item name="action" label="Chức Năng" className="mb-3">
-                <Select 
-                  options={[
-                    { value: 'Thêm thẻ', label: 'Thêm thẻ' },
-                    { value: 'Chỉnh sửa thẻ', label: 'Chỉnh sửa thẻ' },
-                    { value: 'Xóa thẻ', label: 'Xóa thẻ' },
-                    { value: 'Reset thẻ', label: 'Reset thẻ (Xóa DL bơm)' }
-                  ]}
-                  onChange={val => {
-                    setFormMode(val);
-                    if (val === 'Thêm thẻ') form.resetFields();
-                  }}
-                />
-              </Form.Item>
-              <Form.Item name="uid" label="Mã Thẻ" rules={[{ required: true }]} className="mb-3">
-                <Input className="font-mono text-blue-600 font-bold" placeholder="VD: 66C01EB7" />
-              </Form.Item>
-              <Form.Item name="type" label="Loại Thẻ" className="mb-3">
-                <Select options={[{ value: 'Trả trước', label: 'Trả trước' }, { value: 'Trả sau', label: 'Trả sau' }]} />
-              </Form.Item>
-              <Form.Item name="licensePlate" label="Biển Số Xe" className="mb-3">
-                <Input placeholder="VD: 51K-78899" />
-              </Form.Item>
-              <Form.Item name="company" label="Tên Công Ty" className="mb-3">
-                <Input placeholder="Nhập công ty..." />
-              </Form.Item>
-              <Form.Item name="note" label="Ghi Chú" className="mb-3">
-                <Input placeholder="Nhập ghi chú..." />
-              </Form.Item>
-              
-              <Divider className="my-3" />
-              
-              <Form.Item name="totalTopupDisplay" label="Tổng Tiền Nạp" className="mb-3">
-                <Input disabled className="bg-gray-100 font-bold" />
-              </Form.Item>
-              <Form.Item name="balanceDisplay" label="Tiền Dư Còn Lại" className="mb-3">
-                <Input disabled className="bg-gray-100 font-bold text-green-600" />
-              </Form.Item>
-              <Form.Item name="topup" label="Nạp Thêm Tiền" className="mb-3">
-                <InputNumber 
-                  className="w-full" 
-                  formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                  parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                />
-              </Form.Item>
-              <Form.Item label="Nạp Nhanh" className="mb-3">
-                <Select 
-                  placeholder="Chọn mệnh giá"
-                  onChange={handleFastTopupChange}
-                  options={[
-                    { value: 100000, label: '100.000' },
-                    { value: 200000, label: '200.000' },
-                    { value: 500000, label: '500.000' },
-                    { value: 1000000, label: '1.000.000' },
-                    { value: 2000000, label: '2.000.000' },
-                  ]}
-                />
-              </Form.Item>
-              <Form.Item name="allow" label="Cho Phép" valuePropName="checked" className="mb-4">
-                <Switch checkedChildren="Bật" unCheckedChildren="Tắt" />
-              </Form.Item>
-
-              <Button type="primary" htmlType="submit" className="w-full bg-blue-600 h-10 font-bold">
-                XÁC NHẬN
-              </Button>
-            </Form>
-          </Card>
-        </Col>
-
-        {/* Bảng Danh Sách Thẻ (Phải) */}
-        <Col xs={24} lg={16}>
-          <div className="flex flex-col gap-6">
-            {/* Thẻ Trả Trước */}
-            <Card title={<span className="text-blue-600 font-bold uppercase text-sm">Thẻ Trả Trước</span>} size="small" className="shadow-sm dark:bg-gray-800 dark:border-gray-700">
-              <Table 
-                columns={columns} 
-                dataSource={prepaidCards} 
-                rowKey="id" 
-                pagination={false}
-                size="small"
-                scroll={{ x: 'max-content' }}
-                className="dark-theme-table"
-                summary={pageData => {
-                  let totalPump = 0;
-                  let totalVol = 0;
-                  let totalTop = 0;
-                  let totalBal = 0;
-                  pageData.forEach(({ pumpedMoney, pumpedVolume, totalTopup, balance }) => {
-                    totalPump += pumpedMoney; totalVol += pumpedVolume; totalTop += totalTopup; totalBal += balance;
-                  });
-                  return (
-                    <Table.Summary.Row className="font-bold bg-blue-50/50 dark:bg-gray-700/50">
-                      <Table.Summary.Cell index={0} colSpan={3} className="text-center text-blue-800 dark:text-blue-300">Tổng:</Table.Summary.Cell>
-                      <Table.Summary.Cell index={1} align="right">{totalPump.toLocaleString()}</Table.Summary.Cell>
-                      <Table.Summary.Cell index={2} align="right">{totalVol.toFixed(3)}</Table.Summary.Cell>
-                      <Table.Summary.Cell index={3} align="right">{totalTop.toLocaleString()}</Table.Summary.Cell>
-                      <Table.Summary.Cell index={4} align="right" className="text-green-600">{totalBal.toLocaleString()}</Table.Summary.Cell>
-                      <Table.Summary.Cell index={5} colSpan={3} />
-                    </Table.Summary.Row>
-                  );
-                }}
-              />
-            </Card>
-
-            {/* Thẻ Trả Sau */}
-            <Card title={<span className="text-orange-500 font-bold uppercase text-sm">Thẻ Trả Sau</span>} size="small" className="shadow-sm dark:bg-gray-800 dark:border-gray-700">
-              <Table 
-                columns={columns} 
-                dataSource={postpaidCards} 
-                rowKey="id" 
-                pagination={false}
-                size="small"
-                scroll={{ x: 'max-content' }}
-                className="dark-theme-table"
-                summary={pageData => {
-                  let totalPump = 0;
-                  let totalVol = 0;
-                  pageData.forEach(({ pumpedMoney, pumpedVolume }) => {
-                    totalPump += pumpedMoney; totalVol += pumpedVolume;
-                  });
-                  return (
-                    <Table.Summary.Row className="font-bold bg-orange-50/50 dark:bg-gray-700/50">
-                      <Table.Summary.Cell index={0} colSpan={3} className="text-center text-orange-800 dark:text-orange-300">Tổng:</Table.Summary.Cell>
-                      <Table.Summary.Cell index={1} align="right">{totalPump.toLocaleString()}</Table.Summary.Cell>
-                      <Table.Summary.Cell index={2} align="right">{totalVol.toFixed(3)}</Table.Summary.Cell>
-                      <Table.Summary.Cell index={3} align="right">0</Table.Summary.Cell>
-                      <Table.Summary.Cell index={4} align="right">0</Table.Summary.Cell>
-                      <Table.Summary.Cell index={5} colSpan={3} />
-                    </Table.Summary.Row>
-                  );
-                }}
-              />
-            </Card>
-          </div>
-        </Col>
-      </Row>
+          <Button type="primary" htmlType="submit" className="w-full bg-[#1677ff] font-bold h-10 rounded">
+            XÁC NHẬN
+          </Button>
+        </Form>
+      </Modal>
     </div>
   );
 };

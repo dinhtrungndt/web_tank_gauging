@@ -1,5 +1,6 @@
-import { Button, Form, Input, Modal, Select } from 'antd';
+import { Button, Form, Input, Modal, Select, Table } from 'antd';
 import { FileText, Filter, Lock, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -26,7 +27,7 @@ const initialPumps = Array.from({ length: 14 }).map((_, i) => {
   };
 });
 
-const PumpCard = ({ pump }) => {
+const PumpCard = ({ pump, onOpenDetails }) => {
   // Determine colors based on status
   let bgClass = 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'; // idle (Trắng)
   let headerClass = 'bg-blue-900 text-white';
@@ -40,7 +41,10 @@ const PumpCard = ({ pump }) => {
   }
 
   return (
-    <div className={`relative flex flex-col rounded-md overflow-hidden border-2 shadow-sm transition-all duration-300 ${bgClass}`}>
+    <div 
+      onClick={() => onOpenDetails({ open: true, pump })}
+      className={`relative flex flex-col rounded-md overflow-hidden border-2 shadow-sm transition-all duration-300 cursor-pointer hover:shadow-md hover:opacity-90 ${bgClass}`}
+    >
       {/* Header */}
       <div className={`py-1 px-1 text-center flex flex-col items-center justify-center min-h-[48px] ${headerClass}`}>
         <div className="font-bold text-sm leading-none">{pump.id}</div>
@@ -84,9 +88,11 @@ const PumpCard = ({ pump }) => {
   );
 };
 
-export const Pumps = () => {
+export const Pumps = ({ isDashboard }) => {
+  const navigate = useNavigate();
   const [pumps, setPumps] = useState(initialPumps);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [authModal, setAuthModal] = useState({ open: false, action: null });
+  const [detailsModal, setDetailsModal] = useState({ open: false, pump: null });
   const [form] = Form.useForm();
 
   // Filtering state
@@ -111,11 +117,19 @@ export const Pumps = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleChotSo = (values) => {
+  const handleAuthSubmit = (values) => {
     if (values.pin === '1234') {
-      toast.success('Chốt số thành công!');
-      setIsModalOpen(false);
+      toast.success('Xác thực thành công!');
+      const targetAction = authModal.action;
+      setAuthModal({ open: false, action: null });
       form.resetFields();
+      setDetailsModal({ open: false, pump: null });
+      
+      if (targetAction === 'chot-so') {
+        navigate('/chot-so');
+      } else if (targetAction === 'bao-cao') {
+        navigate('/bao-cao');
+      }
     } else {
       toast.error('Sai mật khẩu!');
     }
@@ -133,22 +147,20 @@ export const Pumps = () => {
   return (
     <div className="flex flex-col gap-4">
       {/* Top Header & Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Giám Sát Bán Hàng</h2>
-          <div className="flex gap-4 mt-1 text-xs">
-            <span className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-white border border-gray-400"></div> Đang chờ</span>
-            <span className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-yellow-400"></div> Đã nhắc cò</span>
-            <span className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-green-500"></div> Đang bơm</span>
+      {!isDashboard && (
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Giám Sát Bán Hàng</h2>
+            <p className="text-gray-500 dark:text-gray-400">Theo dõi trạng thái các trụ bơm theo thời gian thực.</p>
+          </div>
+          <div className="flex gap-2">
+            <Button icon={<FileText size={16} />} onClick={() => setAuthModal({ open: true, action: 'bao-cao' })}>Báo Cáo</Button>
+            <Button type="primary" className="bg-blue-600" icon={<Lock size={16} />} onClick={() => setAuthModal({ open: true, action: 'chot-so' })}>
+              Chốt Số
+            </Button>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button icon={<FileText size={16} />}>Báo Cáo</Button>
-          <Button type="primary" className="bg-blue-600" icon={<Lock size={16} />} onClick={() => setIsModalOpen(true)}>
-            Chốt Số
-          </Button>
-        </div>
-      </div>
+      )}
 
       {/* Filter Bar */}
       <div className="flex flex-wrap items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
@@ -189,7 +201,7 @@ export const Pumps = () => {
       {/* Pumps Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-10 gap-2 p-3 bg-gray-200 dark:bg-gray-800/50 rounded-lg">
         {filteredPumps.map(pump => (
-          <PumpCard key={pump.id} pump={pump} />
+          <PumpCard key={pump.id} pump={pump} onOpenDetails={setDetailsModal} />
         ))}
         {filteredPumps.length === 0 && (
           <div className="col-span-full py-8 text-center text-gray-500 dark:text-gray-400">
@@ -198,15 +210,108 @@ export const Pumps = () => {
         )}
       </div>
 
-      {/* Modal Chốt Số */}
+      {/* Modal Chi tiết Vòi Bơm */}
       <Modal
-        title="Nhập Mật Khẩu Chốt Số"
-        open={isModalOpen}
-        onCancel={() => { setIsModalOpen(false); form.resetFields(); }}
+        title={null}
+        open={detailsModal.open}
+        onCancel={() => setDetailsModal({ open: false, pump: null })}
+        footer={null}
+        width={900}
+        className="dark:bg-gray-800 p-0"
+        closeIcon={null}
+      >
+        {detailsModal.pump && (
+          <div className="flex flex-col border border-gray-300 dark:border-gray-700">
+            {/* Top Navigation / Header like in Hình 2 */}
+            <div className="flex justify-between text-xs font-bold text-blue-800 dark:text-blue-400 p-2 border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900">
+              <span className="cursor-pointer hover:underline" onClick={() => setDetailsModal({ open: false, pump: null })}>Trang Chủ</span>
+              <div className="flex gap-8">
+                <span className="cursor-pointer hover:underline" onClick={() => setAuthModal({ open: true, action: 'bao-cao' })}>Báo Cáo</span>
+                <span className="cursor-pointer hover:underline" onClick={() => setAuthModal({ open: true, action: 'chot-so' })}>Chốt Số</span>
+                <span className="cursor-pointer hover:underline">Đổi Mật Khẩu</span>
+              </div>
+              <span className="cursor-pointer hover:underline">Restart</span>
+            </div>
+
+            {/* Top Table: Tổng kết vòi */}
+            <Table
+              size="small"
+              pagination={false}
+              dataSource={[{ ...detailsModal.pump, key: 1, serial: 113 + parseInt(detailsModal.pump.id.replace('MT', '')) }]}
+              className="mb-4"
+              columns={[
+                { title: 'Vòi', dataIndex: 'id', align: 'center', render: id => parseInt(id.replace('MT', '')) },
+                { title: 'Kết Nối', key: 'status', align: 'center', render: () => <div className="w-3 h-3 bg-green-500 rounded-full mx-auto" /> },
+                { title: 'Nhiên Liệu', dataIndex: 'fuelType', align: 'center', render: f => <span className={f.includes('E10') ? 'text-green-600' : 'text-orange-500'}>{f.includes('E10') ? 'E10' : 'DO_II'}</span> },
+                { title: 'Serial', dataIndex: 'serial', align: 'center' },
+                { title: 'Tổng Số Tiền', dataIndex: 'totalMoney', align: 'center', render: v => v.toLocaleString() },
+                { title: 'Tổng Số Lít', dataIndex: 'volume', align: 'center', render: () => '44,542.126' }, // Mock large volume
+                { title: 'Tổng Lần Bán', dataIndex: 'totalCount', align: 'center' },
+              ]}
+              bordered
+              rowClassName="bg-white dark:bg-gray-800 text-center"
+              components={{
+                header: {
+                  cell: (props) => <th {...props} className="bg-blue-900 text-white text-center text-xs" />
+                }
+              }}
+            />
+
+            {/* Title & Navigation */}
+            <div className="flex flex-col items-center mb-2">
+              <div className="flex gap-2 mb-1">
+                <Button size="small" icon={<span className="text-blue-600">←</span>} />
+                <Button size="small" icon={<span className="text-blue-600">→</span>} />
+              </div>
+              <div className="text-sm font-bold text-blue-900 dark:text-blue-400">
+                Nhật Ký Lần Bơm Gần Nhất Của Vòi {parseInt(detailsModal.pump.id.replace('MT', ''))}
+              </div>
+            </div>
+
+            {/* Bottom Table: 5 cuộc bơm */}
+            <Table
+              size="small"
+              pagination={false}
+              dataSource={[
+                { key: 1, bill: 13831, date: '16/07/2026', time: '19:29:32', money: 20000, volume: 0.973, price: detailsModal.pump.price },
+                { key: 2, bill: 13830, date: '16/07/2026', time: '19:18:59', money: 70000, volume: 3.406, price: detailsModal.pump.price },
+                { key: 3, bill: 13829, date: '16/07/2026', time: '19:09:31', money: 50000, volume: 2.433, price: detailsModal.pump.price },
+                { key: 4, bill: 13828, date: '16/07/2026', time: '19:09:11', money: 50000, volume: 2.433, price: detailsModal.pump.price },
+                { key: 5, bill: 13827, date: '16/07/2026', time: '18:53:02', money: 50000, volume: 2.433, price: detailsModal.pump.price },
+              ]}
+              columns={[
+                { title: 'Lần', dataIndex: 'key', align: 'center' },
+                { title: 'Số bill', dataIndex: 'bill', align: 'center' },
+                { title: 'Ngày', dataIndex: 'date', align: 'center' },
+                { title: 'Giờ', dataIndex: 'time', align: 'center' },
+                { title: 'Số Tiền', dataIndex: 'money', align: 'center', render: v => v.toLocaleString() },
+                { title: 'Số Lít', dataIndex: 'volume', align: 'center', render: v => v.toLocaleString('vi-VN', { minimumFractionDigits: 3 }) },
+                { title: 'Đơn Giá', dataIndex: 'price', align: 'center', render: v => v.toLocaleString() },
+              ]}
+              bordered
+              rowClassName="bg-white dark:bg-gray-800 text-center text-xs"
+              components={{
+                header: {
+                  cell: (props) => <th {...props} className="bg-blue-900 text-white text-center text-xs" />
+                }
+              }}
+            />
+            <div className="text-center text-[10px] text-gray-400 py-1 border-t border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+              Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Modal Xác Thực */}
+      <Modal
+        title={authModal.action === 'bao-cao' ? "Nhập Mật Khẩu Xem Báo Cáo" : "Nhập Mật Khẩu Chốt Số"}
+        open={authModal.open}
+        onCancel={() => { setAuthModal({ open: false, action: null }); form.resetFields(); }}
         footer={null}
         className="dark:bg-gray-800"
       >
-        <Form form={form} layout="vertical" onFinish={handleChotSo}>
+        <Form form={form} layout="vertical" onFinish={handleAuthSubmit}>
           <Form.Item
             name="pin"
             rules={[{ required: true, message: 'Vui lòng nhập mã PIN!' }]}
@@ -214,7 +319,7 @@ export const Pumps = () => {
             <Input.Password placeholder="Mã PIN (Mặc định: 1234)" size="large" />
           </Form.Item>
           <Form.Item className="mb-0 text-right">
-            <Button onClick={() => setIsModalOpen(false)} className="mr-2">Hủy</Button>
+            <Button onClick={() => { setAuthModal({ open: false, action: null }); form.resetFields(); }} className="mr-2">Hủy</Button>
             <Button type="primary" htmlType="submit" className="bg-blue-600">Xác Nhận</Button>
           </Form.Item>
         </Form>

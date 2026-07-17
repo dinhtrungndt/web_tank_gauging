@@ -4,6 +4,7 @@ import { ProtectedRoute } from '../components/ProtectedRoute';
 import { Login } from '../pages/Login';
 import { Pumps } from '../pages/Pumps';
 import { Tanks } from '../pages/Tanks';
+import { Cards } from '../pages/Cards';
 
 function DashboardRoutes() {
   return (
@@ -12,6 +13,7 @@ function DashboardRoutes() {
         <Route path="/" element={<Navigate to="/pumps" replace />} />
         <Route path="/pumps" element={<Pumps />} />
         <Route path="/tanks" element={<Tanks />} />
+        <Route path="/cards" element={<Cards />} />
       </Routes>
     </AppLayout>
   );

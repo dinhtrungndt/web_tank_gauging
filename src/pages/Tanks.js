@@ -2,6 +2,7 @@ import { Button, DatePicker, Modal, Table } from 'antd';
 import { AlertTriangle, Download, Droplets, Play, Square, Thermometer } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const mockTanks = [
   { id: 'Bồn 1', fuelType: 'E10', currentVolume: 2968, emptyVolume: 7032, totalVolume: 10000, level: 807, waterLevel: 0, waterVolume: 0, temp: 32 },
@@ -123,25 +124,14 @@ const TankCard = ({ tank, onDetails, onImport }) => {
 };
 
 export const Tanks = ({ isDashboard }) => {
-  const [detailsModal, setDetailsModal] = useState({ open: false, tank: null });
-  const [importModal, setImportModal] = useState({ open: false, tank: null, status: 'idle' });
+  const navigate = useNavigate();
 
   const handleOpenDetails = (tank) => {
-    setDetailsModal({ open: true, tank });
+    navigate('/bao-cao-bon');
   };
 
   const handleOpenImport = (tank) => {
-    setImportModal({ open: true, tank, status: 'idle' });
-  };
-
-  const handleStartImport = () => {
-    setImportModal(prev => ({ ...prev, status: 'importing' }));
-    toast.success('Đã bắt đầu nhập bồn. Vui lòng đợi xe bồn xả xong...');
-  };
-
-  const handleEndImport = () => {
-    setImportModal(prev => ({ ...prev, status: 'done' }));
-    toast.success('Đã kết thúc nhập bồn và chốt số liệu!');
+    navigate('/nhap-bon');
   };
 
   return (
@@ -165,84 +155,6 @@ export const Tanks = ({ isDashboard }) => {
           />
         ))}
       </div>
-
-      {/* Details Modal */}
-      <Modal
-        title={`Chi tiết Bồn: ${detailsModal.tank?.id}`}
-        open={detailsModal.open}
-        onCancel={() => setDetailsModal({ open: false, tank: null })}
-        width={800}
-        footer={null}
-      >
-        <div className="flex justify-between mb-4">
-          <div className="flex gap-2">
-            <DatePicker.RangePicker format="DD/MM/YYYY" />
-            <Button type="primary">Tìm Kiếm</Button>
-          </div>
-          <Button icon={<Download size={16} />}>Tải File CSV</Button>
-        </div>
-        <Table
-          columns={[
-            { title: 'Thời gian', dataIndex: 'time', key: 'time' },
-            { title: 'Thao tác', dataIndex: 'action', key: 'action' },
-            { title: 'Số lượng (Lít)', dataIndex: 'amount', key: 'amount', align: 'right' },
-            { title: 'Tồn sau (Lít)', dataIndex: 'balance', key: 'balance', align: 'right' },
-          ]}
-          dataSource={[
-            { key: 1, time: '17/07/2026 10:30', action: 'Bán hàng (Ca 1)', amount: -500, balance: detailsModal.tank?.currentVolume },
-            { key: 2, time: '16/07/2026 14:00', action: 'Nhập bồn', amount: +10000, balance: (detailsModal.tank?.currentVolume || 0) + 500 },
-          ]}
-          pagination={false}
-        />
-      </Modal>
-
-      {/* Import Modal */}
-      <Modal
-        title={`Nhập Hàng - ${importModal.tank?.id}`}
-        open={importModal.open}
-        onCancel={() => setImportModal({ open: false, tank: null, status: 'idle' })}
-        footer={null}
-        width={400}
-      >
-        <div className="flex flex-col items-center justify-center p-6 gap-6">
-          <div className="text-center text-gray-600 dark:text-gray-400">
-            {importModal.status === 'idle' && 'Nhấn BẮT ĐẦU trước khi xe bồn xả van nhập.'}
-            {importModal.status === 'importing' && 'Đang trong quá trình nhập bồn. Sau khi nhập xong đợi bồn yên tĩnh 10 phút rồi nhấn KẾT THÚC.'}
-            {importModal.status === 'done' && 'Nhập bồn hoàn tất. Số liệu đã được ghi nhận.'}
-          </div>
-
-          <div className="flex gap-4">
-            <Button
-              size="large"
-              type="primary"
-              className="bg-blue-600 w-32"
-              icon={<Play size={16} />}
-              disabled={importModal.status !== 'idle'}
-              onClick={handleStartImport}
-            >
-              BẮT ĐẦU
-            </Button>
-            <Button
-              size="large"
-              danger
-              type="primary"
-              className="w-32"
-              icon={<Square size={16} />}
-              disabled={importModal.status !== 'importing'}
-              onClick={handleEndImport}
-            >
-              KẾT THÚC
-            </Button>
-          </div>
-
-          {importModal.status === 'done' && (
-            <div className="mt-4 w-full bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-4 rounded text-center">
-              <div className="text-green-600 dark:text-green-400 font-bold mb-1">Số lượng đã nhập:</div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">10,000 Lít</div>
-            </div>
-          )}
-        </div>
-      </Modal>
     </div>
   );
 };

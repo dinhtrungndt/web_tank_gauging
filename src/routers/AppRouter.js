@@ -10,6 +10,8 @@ import { ChotSo } from '../pages/ChotSo';
 import { BaoCao } from '../pages/BaoCao';
 import { DoiMatKhau } from '../pages/DoiMatKhau';
 import { KhungThoiGian } from '../pages/KhungThoiGian';
+import { BaoCaoBon } from '../pages/BaoCaoBon';
+import { NhapBon } from '../pages/NhapBon';
 
 function DashboardRoutes() {
   return (
@@ -20,6 +22,8 @@ function DashboardRoutes() {
         <Route path="/cards" element={<Cards />} />
         <Route path="/chot-so" element={<ChotSo />} />
         <Route path="/bao-cao" element={<BaoCao />} />
+        <Route path="/bao-cao-bon" element={<BaoCaoBon />} />
+        <Route path="/nhap-bon" element={<NhapBon />} />
         <Route path="/doi-mat-khau" element={<DoiMatKhau />} />
         <Route path="/khung-thoi-gian" element={<KhungThoiGian />} />
         <Route path="/pumps" element={<Navigate to="/home" replace />} />

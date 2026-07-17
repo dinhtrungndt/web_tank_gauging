@@ -1,0 +1,166 @@
+import React, { useState } from 'react';
+import { Button, Modal, Table } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { ArrowDown, Download } from 'lucide-react';
+import toast from 'react-hot-toast';
+
+const initialData = [
+  { id: '1', fuel: 'E10', startMm: 807, startLit: 2968, endMm: 807, endLit: 2968, export: 0, import: '-' },
+  { id: '2', fuel: 'E10', startMm: 1813, startLit: 11876, endMm: 1813, endLit: 11876, export: 0, import: '-' },
+  { id: '3', fuel: 'DO_II', startMm: 1409, startLit: 8888, endMm: 1409, endLit: 8888, export: 0, import: '-' },
+];
+
+const formatNum = (num) => num === '-' ? '-' : num.toLocaleString('vi-VN');
+
+export const NhapBon = () => {
+  const navigate = useNavigate();
+  const [data, setData] = useState(initialData);
+  const [status, setStatus] = useState('idle'); // idle -> started -> ended
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
+  const [logModal, setLogModal] = useState({ open: false, tankId: null });
+
+  const handleStart = () => {
+    setStatus('started');
+    const now = new Date();
+    setStartTime(`${now.toLocaleDateString('en-GB')} ${now.toLocaleTimeString('en-GB')}`);
+    toast.success('Đã bắt đầu ghi nhận dữ liệu nhập bồn.');
+  };
+
+  const handleEnd = () => {
+    setStatus('ended');
+    const now = new Date();
+    setEndTime(`${now.toLocaleDateString('en-GB')} ${now.toLocaleTimeString('en-GB')}`);
+    // Simulate some imported data
+    setData(prev => prev.map(p => {
+      if (p.id === '1') return { ...p, endMm: 950, endLit: 3500, import: 532 };
+      return p;
+    }));
+    toast.success('Đã kết thúc nhập bồn và chốt số liệu!');
+  };
+
+  const handleDownloadCsv = () => {
+    toast.success(`Đã tải về file nhat_ky_bon_${logModal.tankId}.csv`);
+  };
+
+  return (
+    <div className="flex flex-col bg-gray-50 min-h-screen">
+      {/* Top Navigation */}
+      <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white shadow-sm mb-4">
+        <div 
+          className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2"
+          onClick={() => navigate('/')}
+        >
+          Trang Chủ
+        </div>
+        <div 
+          className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pr-2"
+          onClick={() => navigate('/bao-cao-bon')}
+        >
+          Báo Cáo Bồn
+        </div>
+      </div>
+
+      <div className="flex-1 px-4 pb-4">
+        {/* Controls */}
+        <div className="bg-white border border-gray-300 rounded p-2 mb-4">
+          <div className="flex items-center gap-4 mb-2">
+            <Button 
+              type="primary" 
+              className="bg-[#1677ff] font-bold w-24 rounded" 
+              onClick={handleStart}
+              disabled={status !== 'idle'}
+            >
+              BẮT ĐẦU
+            </Button>
+            <span className="font-bold text-gray-800 text-xs">{startTime}</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button 
+              type="primary" 
+              className="bg-[#1677ff] font-bold w-24 rounded" 
+              onClick={handleEnd}
+              disabled={status !== 'started'}
+            >
+              KẾT THÚC
+            </Button>
+            <span className="font-bold text-gray-800 text-xs">{endTime}</span>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="bg-white border border-gray-300 rounded overflow-hidden">
+          <table className="w-full text-xs text-center border-collapse">
+            <thead>
+              <tr className="bg-[#0f3460] text-white">
+                <th className="border border-gray-400 p-2 font-bold w-12" rowSpan={2}>Bồn</th>
+                <th className="border border-gray-400 p-2 font-bold w-24" rowSpan={2}>Nhiên<br/>Liệu</th>
+                <th className="border border-gray-400 p-1 font-bold" colSpan={2}>Mức Đầu</th>
+                <th className="border border-gray-400 p-1 font-bold" colSpan={2}>Mức Cuối</th>
+                <th className="border border-gray-400 p-2 font-bold w-20" rowSpan={2}>Xuất<br/>(Lít)</th>
+                <th className="border border-gray-400 p-2 font-bold w-20" rowSpan={2}>Nhập<br/>(Lít)</th>
+                <th className="border border-gray-400 p-2 font-bold w-12" rowSpan={2}>Tải<br/>Về</th>
+              </tr>
+              <tr className="bg-[#0f3460] text-white">
+                <th className="border border-gray-400 p-1 font-bold w-16">mm</th>
+                <th className="border border-gray-400 p-1 font-bold w-20">Lít</th>
+                <th className="border border-gray-400 p-1 font-bold w-16">mm</th>
+                <th className="border border-gray-400 p-1 font-bold w-20">Lít</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((row) => (
+                <tr key={row.id} className="border-b border-gray-200">
+                  <td className="p-2">{row.id}</td>
+                  <td className={`p-2 font-bold ${row.fuel === 'E10' ? 'text-green-600' : 'text-orange-500'}`}>{row.fuel}</td>
+                  <td className="p-2">{formatNum(row.startMm)}</td>
+                  <td className="p-2">{formatNum(row.startLit)}</td>
+                  <td className="p-2">{formatNum(row.endMm)}</td>
+                  <td className="p-2">{formatNum(row.endLit)}</td>
+                  <td className="p-2 font-bold">{formatNum(row.export)}</td>
+                  <td className="p-2 font-bold">{formatNum(row.import)}</td>
+                  <td className="p-2 cursor-pointer text-blue-600 flex justify-center items-center h-full pt-3" onClick={() => setLogModal({ open: true, tankId: row.id })}>
+                    <ArrowDown size={14} className="font-bold stroke-[3px] hover:scale-125 transition-transform" />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="text-center text-gray-500 text-[10px] mt-4">
+          Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
+        </div>
+      </div>
+
+      {/* Nhật Ký Modal */}
+      <Modal
+        title={`Nhật Ký Bồn ${logModal.tankId}`}
+        open={logModal.open}
+        onCancel={() => setLogModal({ open: false, tankId: null })}
+        width={700}
+        footer={null}
+      >
+        <div className="flex justify-end mb-4">
+          <Button type="primary" icon={<Download size={16} />} onClick={handleDownloadCsv}>
+            Tải File CSV
+          </Button>
+        </div>
+        <Table
+          columns={[
+            { title: 'Thời gian', dataIndex: 'time', key: 'time' },
+            { title: 'Thao tác', dataIndex: 'action', key: 'action' },
+            { title: 'Số lượng (Lít)', dataIndex: 'amount', key: 'amount', align: 'right' },
+            { title: 'Tồn sau (Lít)', dataIndex: 'balance', key: 'balance', align: 'right' },
+          ]}
+          dataSource={[
+            { key: 1, time: '17/07/2026 10:30', action: 'Bán hàng (Ca 1)', amount: -500, balance: 2468 },
+            { key: 2, time: '16/07/2026 14:00', action: 'Nhập bồn', amount: +10000, balance: 2968 },
+          ]}
+          pagination={false}
+          size="small"
+          bordered
+        />
+      </Modal>
+    </div>
+  );
+};

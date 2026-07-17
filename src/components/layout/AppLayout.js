@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Layout, Menu, Button, Avatar, Dropdown } from 'antd';
 import { useTheme } from 'next-themes';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   Fuel, 
   Container, 
@@ -19,10 +21,18 @@ const { Header, Sider, Content } = Layout;
 export const AppLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { logout } = useAuth();
 
   const handleMenuClick = (e) => {
-    // We will add routing later
-    console.log('click ', e);
+    navigate(`/${e.key}`);
+  };
+
+  const handleLogout = () => {
+    logout();
+    toast.success('Đã đăng xuất');
+    navigate('/login');
   };
 
   const themeMenuItems = [
@@ -34,7 +44,7 @@ export const AppLayout = ({ children }) => {
   const userMenuItems = [
     { key: 'profile', icon: <User size={16} />, label: 'Tài khoản' },
     { type: 'divider' },
-    { key: 'logout', icon: <LogOut size={16} />, label: 'Đăng xuất', onClick: () => toast.success('Đã đăng xuất') },
+    { key: 'logout', icon: <LogOut size={16} />, label: 'Đăng xuất', onClick: handleLogout },
   ];
 
   return (
@@ -46,15 +56,15 @@ export const AppLayout = ({ children }) => {
         theme={theme === 'dark' ? 'dark' : 'light'}
         className="shadow-md z-10"
       >
-        <div className="h-16 flex items-center justify-center border-b border-gray-200 dark:border-gray-800">
-          <div className={`font-bold text-blue-600 dark:text-blue-400 transition-all ${collapsed ? 'text-xl' : 'text-2xl'}`}>
-            {collapsed ? 'M' : 'MONTECH'}
+        <div className="h-16 flex items-center justify-center border-b border-gray-200 dark:border-gray-800 px-2 overflow-hidden whitespace-nowrap">
+          <div className={`font-bold text-blue-600 dark:text-blue-400 transition-all ${collapsed ? 'text-xl' : 'text-xl'}`}>
+            {collapsed ? 'D' : 'DVN MONTECH'}
           </div>
         </div>
         <Menu
           theme={theme === 'dark' ? 'dark' : 'light'}
           mode="inline"
-          defaultSelectedKeys={['pumps']}
+          selectedKeys={[location.pathname.replace('/', '') || 'pumps']}
           onClick={handleMenuClick}
           className="mt-4 border-r-0"
           items={[

@@ -4,35 +4,39 @@ import { useNavigate } from 'react-router-dom';
 import { Pumps } from './Pumps';
 import { Tanks } from './Tanks';
 
-const mockTransactions = Array.from({ length: 5 }).map((_, i) => ({
-  id: `GD${(i + 1).toString().padStart(4, '0')}`,
-  time: `17/07/2026 1${Math.floor(i/6)}:${(i%6)*10}`,
-  uid: i % 2 === 0 ? 'A1B2C3D4' : 'E5F6G7H8',
-  owner: i % 2 === 0 ? 'Nguyễn Văn A' : 'Công ty TNHH Vận Tải XYZ',
-  pump: `MT000${(i % 5) + 1}`,
-  fuel: i % 2 === 0 ? 'Xăng E10' : 'Dầu Điêzen',
-  volume: (Math.random() * 50 + 2).toFixed(2),
-  total: Math.floor(Math.random() * 1000000 + 50000),
-}));
+const mockTransactions = [
+  { id: 1, date: '16/07/2026', time: '20:11:51', plate: '51K-50687', money: '50.000', vol: '2,131', price: '23.456', company: 'Cty Montech', note: '' },
+  { id: 2, date: '16/07/2026', time: '20:11:20', plate: '51D-11644', money: '200.000', vol: '8,526', price: '23.456', company: 'Cty Tai Viet', note: '' },
+  { id: 3, date: '16/07/2026', time: '20:11:05', plate: '51C-77899', money: '150.000', vol: '6,394', price: '23.456', company: 'Cty Montech', note: '' },
+  { id: 4, date: '16/07/2026', time: '20:10:52', plate: '51D-11644', money: '100.000', vol: '4,263', price: '23.456', company: 'Cty Tai Viet', note: '' },
+  { id: 5, date: '16/07/2026', time: '20:10:42', plate: '51D-11644', money: '100.000', vol: '4,263', price: '23.456', company: 'Cty Tai Viet', note: '' },
+  { id: 6, date: '16/07/2026', time: '20:10:31', plate: '51D-11644', money: '88.000', vol: '3,751', price: '23.456', company: 'Cty Tai Viet', note: '' },
+  { id: 7, date: '16/07/2026', time: '19:54:29', plate: '51K-50687', money: '500.000', vol: '21,316', price: '23.456', company: 'Cty Montech', note: '' },
+  { id: 8, date: '', time: '', plate: '', money: '', vol: '', price: '', company: '', note: '' },
+  { id: 9, date: '', time: '', plate: '', money: '', vol: '', price: '', company: '', note: '' },
+  { id: 10, date: '', time: '', plate: '', money: '', vol: '', price: '', company: '', note: '' },
+];
 
 export const Home = () => {
   const navigate = useNavigate();
 
   const transactionColumns = [
-    { title: 'STT', key: 'stt', align: 'center', render: (_, __, i) => i + 1 },
-    { title: 'Ngày', dataIndex: 'date', key: 'date', render: () => '16/07/2026' },
-    { title: 'Giờ', dataIndex: 'time', key: 'time', render: (val) => val.split(' ')[1] || '20:11:51' },
-    { title: 'Biển Số Xe', dataIndex: 'licensePlate', key: 'licensePlate', render: (_, __, i) => i % 2 === 0 ? '51K-50687' : '51D-11644' },
-    { title: 'Số Tiền', dataIndex: 'total', key: 'total', align: 'right', render: (val) => val.toLocaleString() },
-    { title: 'Số Lít', dataIndex: 'volume', key: 'volume', align: 'right' },
-    { title: 'Đơn Giá', key: 'price', align: 'right', render: () => '23.456' },
-    { title: 'Công Ty', dataIndex: 'owner', key: 'owner' },
-    { title: 'Ghi Chú', key: 'note' },
+    { title: 'STT', dataIndex: 'id', key: 'id', align: 'center', width: 60 },
+    { title: 'Ngày', dataIndex: 'date', key: 'date', align: 'center' },
+    { title: 'Giờ', dataIndex: 'time', key: 'time', align: 'center' },
+    { title: 'Biển Số Xe', dataIndex: 'plate', key: 'plate', align: 'center' },
+    { title: 'Số Tiền', dataIndex: 'money', key: 'money', align: 'center' },
+    { title: 'Số Lít', dataIndex: 'vol', key: 'vol', align: 'center' },
+    { title: 'Đơn Giá', dataIndex: 'price', key: 'price', align: 'center' },
+    { title: 'Công Ty', dataIndex: 'company', key: 'company', align: 'center' },
+    { title: 'Ghi Chú', dataIndex: 'note', key: 'note', align: 'center' },
     { 
       title: 'Chi Tiết', 
       key: 'action',
       align: 'center',
-      render: () => <a className="text-blue-600 font-bold hover:underline" onClick={() => navigate('/cards')}>Xem</a>
+      render: (_, record) => record.date ? (
+        <a className="text-blue-600 font-bold hover:underline cursor-pointer" onClick={() => navigate('/cards')}>Xem</a>
+      ) : null
     },
   ];
 

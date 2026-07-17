@@ -12,7 +12,6 @@ function DashboardRoutes() {
         <Route path="/" element={<Navigate to="/pumps" replace />} />
         <Route path="/pumps" element={<Pumps />} />
         <Route path="/tanks" element={<Tanks />} />
-        {/* We will add cards route here later */}
       </Routes>
     </AppLayout>
   );

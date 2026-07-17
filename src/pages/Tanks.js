@@ -5,11 +5,11 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 const mockTanks = [
-  { id: 'Bồn 1', fuelType: 'E10', currentVolume: 2968, emptyVolume: 7032, totalVolume: 10000, level: 807, waterLevel: 0, waterVolume: 0, temp: 32 },
-  { id: 'Bồn 2', fuelType: 'E10', currentVolume: 11876, emptyVolume: 3124, totalVolume: 15000, level: 1813, waterLevel: 0, waterVolume: 0, temp: 32 },
-  { id: 'Bồn 3', fuelType: 'DO_II', currentVolume: 8888, emptyVolume: 6112, totalVolume: 15000, level: 1409, waterLevel: 0, waterVolume: 0, temp: 33 },
-  { id: 'Bồn 4', fuelType: 'DO_II', currentVolume: 13849, emptyVolume: 1151, totalVolume: 15000, level: 1607, waterLevel: 234, waterVolume: 1089, temp: 30 },
-  { id: 'Bồn 5', fuelType: 'E10', currentVolume: 0, emptyVolume: 25000, totalVolume: 25000, level: 0, waterLevel: 0, waterVolume: 0, temp: 30 },
+  { id: 'Bồn 1', fuelType: 'Xăng RON 95-III', currentVolume: 2968, emptyVolume: 7032, totalVolume: 10000, level: 807, waterLevel: 0, waterVolume: 0, temp: 32 },
+  { id: 'Bồn 2', fuelType: 'Xăng E10 RON95 Mức 3', currentVolume: 11876, emptyVolume: 3124, totalVolume: 15000, level: 1813, waterLevel: 0, waterVolume: 0, temp: 32 },
+  { id: 'Bồn 3', fuelType: 'Dầu DO 0,05S-II', currentVolume: 0, emptyVolume: 20000, totalVolume: 20000, level: 0, waterLevel: 0, waterVolume: 0, temp: 31 },
+  { id: 'Bồn 4', fuelType: 'Dầu DO 0,05S-II', currentVolume: 0, emptyVolume: 20000, totalVolume: 20000, level: 0, waterLevel: 0, waterVolume: 0, temp: 31 },
+  { id: 'Bồn 5', fuelType: 'Xăng E5 RON 92-II', currentVolume: 0, emptyVolume: 25000, totalVolume: 25000, level: 0, waterLevel: 0, waterVolume: 0, temp: 30 },
 ];
 
 const TankCard = ({ tank, onDetails, onImport }) => {
@@ -23,7 +23,7 @@ const TankCard = ({ tank, onDetails, onImport }) => {
 
   let colorClass = 'bg-green-500';
   if (isEmpty) colorClass = 'bg-gray-300 dark:bg-gray-600';
-  else if (tank.fuelType.includes('DO')) colorClass = 'bg-orange-500';
+  else if (tank.fuelType.includes('Dầu')) colorClass = 'bg-orange-500';
 
   if (isLow && !isEmpty) colorClass = 'bg-red-500';
 

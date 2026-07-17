@@ -1,5 +1,4 @@
-import React from 'react';
-import { Input, Button, Form } from 'antd';
+import { Button, Form, Input } from 'antd';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -49,7 +48,7 @@ export const DoiMatKhau = () => {
         </Form>
       </div>
       <div className="text-center text-gray-500 text-xs mt-6">
-        Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
+        Copyright © 2026 - Công ty DVN Technology
       </div>
     </div>
   );

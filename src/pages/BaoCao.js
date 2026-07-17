@@ -1,7 +1,7 @@
+import { Button, Form, Input, Modal, Table } from 'antd';
 import React from 'react';
-import { Input, Button, Form, Table, Modal } from 'antd';
-import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const generateMockDataForShift = (shiftMultiplier) => {
   const pumps = [];
@@ -43,16 +43,16 @@ const ShiftTable = ({ title, shiftMultiplier, buttonColor }) => {
   const dataSource = generateMockDataForShift(shiftMultiplier);
 
   const columns = [
-    { 
+    {
       title: 'Vòi', dataIndex: 'id', align: 'center', width: 60,
       onCell: (record) => ({ rowSpan: record.rowSpan }),
     },
-    { 
+    {
       title: 'Nhiên Liệu', dataIndex: 'fuel', align: 'center', width: 80,
       onCell: (record) => ({ rowSpan: record.rowSpan }),
       render: (text) => <span className={text === 'E10' ? 'text-green-600 font-bold' : 'text-orange-500 font-bold'}>{text}</span>
     },
-    { 
+    {
       title: 'Serial', dataIndex: 'serial', align: 'center', width: 80,
       onCell: (record) => ({ rowSpan: record.rowSpan }),
     },
@@ -63,7 +63,7 @@ const ShiftTable = ({ title, shiftMultiplier, buttonColor }) => {
         { title: 'Kết Thúc', dataIndex: 'moneyEnd', align: 'center' },
       ]
     },
-    { 
+    {
       title: 'Tổng Số Tiền', dataIndex: 'moneyTotal', align: 'center',
       onCell: (record) => ({ rowSpan: record.rowSpan }),
       render: (text) => <span className="font-bold">{text}</span>
@@ -75,7 +75,7 @@ const ShiftTable = ({ title, shiftMultiplier, buttonColor }) => {
         { title: 'Kết Thúc', dataIndex: 'litEnd', align: 'center' },
       ]
     },
-    { 
+    {
       title: 'Tổng Số Lít', dataIndex: 'litTotal', align: 'center',
       onCell: (record) => ({ rowSpan: record.rowSpan }),
       render: (text) => <span className="font-bold">{text}</span>
@@ -84,10 +84,10 @@ const ShiftTable = ({ title, shiftMultiplier, buttonColor }) => {
       title: 'Tải Về', align: 'center', width: 60,
       onCell: (record) => ({ rowSpan: record.rowSpan }),
       render: (_, record) => (
-        <span 
+        <span
           className="text-blue-600 font-bold cursor-pointer hover:underline text-lg"
           onClick={() => {
-            const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + 
+            const csvContent = "data:text/csv;charset=utf-8,\uFEFF" +
               "Vòi,Nhiên Liệu,Serial,Số Tiền Bắt Đầu,Số Tiền Kết Thúc,Tổng Số Tiền,Số Lít Bắt Đầu,Số Lít Kết Thúc,Tổng Số Lít\n" +
               `${record.id},${record.fuel},${record.serial},"${record.moneyStart}","${record.moneyEnd}","${record.moneyTotal}","${record.litStart}","${record.litEnd}","${record.litTotal}"`;
             const encodedUri = encodeURI(csvContent);
@@ -178,15 +178,15 @@ const ShiftTable = ({ title, shiftMultiplier, buttonColor }) => {
           </div>
         </div>
       </div>
-      
+
       {/* Table */}
-      <Table 
-        columns={columns} 
-        dataSource={dataSource} 
-        pagination={false} 
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        pagination={false}
         bordered
         size="small"
-        rowClassName={(record) => 
+        rowClassName={(record) =>
           record.isFirstRow ? "bg-white text-center text-xs" : "bg-white text-center text-xs border-b-2 border-gray-200"
         }
         components={{
@@ -214,7 +214,7 @@ export const BaoCao = () => {
     <div className="flex flex-col bg-gray-50 min-h-screen">
       {/* Top Header */}
       <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white shadow-sm mb-4">
-        <div 
+        <div
           className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2"
           onClick={() => navigate('/')}
         >
@@ -223,7 +223,7 @@ export const BaoCao = () => {
         <div className="flex flex-col items-center flex-1">
           {/* Empty spacer since AppLayout handles the global header */}
         </div>
-        <div 
+        <div
           className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pr-2"
           onClick={() => setKhungThoiGianModalOpen(true)}
         >
@@ -245,21 +245,21 @@ export const BaoCao = () => {
           <div className="flex flex-col text-xs">
             <div className="flex border-b border-gray-200">
               <div className="w-1/2 p-2 text-right font-bold text-orange-500 border-r border-gray-200">Tổng DO:</div>
-              <div className="w-1/2 p-2 text-center font-bold text-gray-800">4.500.000 <br/> 4.500.000</div>
+              <div className="w-1/2 p-2 text-center font-bold text-gray-800">4.500.000 <br /> 4.500.000</div>
             </div>
             <div className="flex border-b border-gray-200">
               <div className="w-1/2 p-2 text-right font-bold text-green-600 border-r border-gray-200">Tổng E10:</div>
-              <div className="w-1/2 p-2 text-center font-bold text-gray-800">13.500.000 <br/> 13.500.000</div>
+              <div className="w-1/2 p-2 text-center font-bold text-gray-800">13.500.000 <br /> 13.500.000</div>
             </div>
             <div className="flex border-b border-gray-200">
               <div className="w-1/2 p-2 text-right font-bold text-red-500 border-r border-gray-200">Tổng trạm:</div>
-              <div className="w-1/2 p-2 text-center font-bold text-red-500">18.000.000 <br/> 18.000.000</div>
+              <div className="w-1/2 p-2 text-center font-bold text-red-500">18.000.000 <br /> 18.000.000</div>
             </div>
           </div>
         </div>
-        
+
         <div className="text-center text-gray-500 text-[10px] pb-4">
-          Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
+          Copyright © 2026 - Công ty DVN Technology
         </div>
       </div>
 
@@ -277,7 +277,7 @@ export const BaoCao = () => {
           ca2_start: '050000', ca2_end: '130000',
           ca3_start: '130000', ca3_end: '210000'
         }}>
-          
+
           <div className="py-2 border-b border-gray-200">
             <h3 className="text-[#0f3460] font-bold text-lg mb-4">CA BÁN 1</h3>
             <div className="flex justify-between items-center mb-3">

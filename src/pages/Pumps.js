@@ -1,8 +1,8 @@
 import { Button, Form, Input, Modal, Select, Table } from 'antd';
 import { FileText, Filter, Lock, Search } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const initialPumps = [
   { id: 'MT0001', fuelType: 'Xăng E10 RON95 Mức 3', money: 20000, volume: 0.973, price: 20550, status: 'idle', serial: 113, totalMoney: 25496900, totalCount: 17 },
@@ -25,7 +25,7 @@ const PumpCard = ({ pump, onOpenDetails }) => {
   }
 
   return (
-    <div 
+    <div
       onClick={() => onOpenDetails({ open: true, pump })}
       className={`relative flex flex-col rounded-md overflow-hidden border-2 shadow-sm transition-all duration-300 cursor-pointer hover:shadow-md hover:opacity-90 ${bgClass}`}
     >
@@ -98,7 +98,7 @@ export const Pumps = ({ isDashboard }) => {
       setAuthModal({ open: false, action: null });
       form.resetFields();
       setDetailsModal({ open: false, pump: null });
-      
+
       if (targetAction === 'chot-so') {
         navigate('/chot-so');
       } else if (targetAction === 'bao-cao') {
@@ -196,14 +196,14 @@ export const Pumps = ({ isDashboard }) => {
 
       {/* Pumps Table */}
       <div className="bg-white rounded border border-gray-300 shadow-sm overflow-hidden">
-        <Table 
+        <Table
           dataSource={filteredPumps.map((pump, index) => ({ ...pump, key: pump.id, idNum: index + 1 }))}
           pagination={false}
           size="small"
           bordered
           columns={[
             { title: 'Vòi', dataIndex: 'idNum', align: 'center' },
-            { 
+            {
               title: 'Nhiên Liệu', dataIndex: 'fuelType', align: 'center',
               render: text => <span className={`font-bold ${text.includes('Xăng') ? 'text-green-600' : 'text-orange-500'}`}>{text}</span>
             },
@@ -213,10 +213,10 @@ export const Pumps = ({ isDashboard }) => {
             { title: 'Serial', dataIndex: 'serial', align: 'center' },
             { title: 'Kết Nối', key: 'connect', align: 'center', render: () => <div className="w-3 h-3 bg-green-500 rounded-full mx-auto" /> },
             { title: 'Trạng Thái', dataIndex: 'status', align: 'center', render: () => 'Đang chờ' },
-            { 
+            {
               title: 'Chi Tiết', key: 'action', align: 'center',
               render: (_, record) => (
-                <span 
+                <span
                   className="text-blue-600 font-bold cursor-pointer hover:underline"
                   onClick={() => setDetailsModal({ open: true, pump: record })}
                 >
@@ -326,7 +326,7 @@ export const Pumps = ({ isDashboard }) => {
               }}
             />
             <div className="text-center text-[10px] text-gray-400 py-1 border-t border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-              Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
+              Copyright © 2026 - Công ty DVN Technology
             </div>
           </div>
         )}
@@ -387,7 +387,7 @@ export const Pumps = ({ isDashboard }) => {
           </Button>
         </Form>
         <div className="text-center text-gray-500 text-xs mt-6">
-          Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
+          Copyright © 2026 - Công ty DVN Technology
         </div>
       </Modal>
     </div>

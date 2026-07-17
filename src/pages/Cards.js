@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
-import { Button, Input, Form, Select, Switch, Table, Modal } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Button, Form, Input, Modal, Select, Switch, Table } from 'antd';
 import { ArrowDown } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -26,7 +26,7 @@ export const Cards = () => {
   // Search states
   const [searchPlate, setSearchPlate] = useState('');
   const [searchCompany, setSearchCompany] = useState('');
-  
+
   const [filterPlate, setFilterPlate] = useState('');
   const [filterCompany, setFilterCompany] = useState('');
 
@@ -37,15 +37,15 @@ export const Cards = () => {
   };
 
   const filteredPrepaid = useMemo(() => {
-    return initialPrepaid.filter(c => 
-      c.plate.toLowerCase().includes(filterPlate) && 
+    return initialPrepaid.filter(c =>
+      c.plate.toLowerCase().includes(filterPlate) &&
       c.company.toLowerCase().includes(filterCompany)
     );
   }, [filterPlate, filterCompany]);
 
   const filteredPostpaid = useMemo(() => {
-    return initialPostpaid.filter(c => 
-      c.plate.toLowerCase().includes(filterPlate) && 
+    return initialPostpaid.filter(c =>
+      c.plate.toLowerCase().includes(filterPlate) &&
       c.company.toLowerCase().includes(filterCompany)
     );
   }, [filterPlate, filterCompany]);
@@ -83,19 +83,19 @@ export const Cards = () => {
 
   const columns = [
     { title: 'STT', dataIndex: 'id', key: 'id', align: 'center', width: 60 },
-    { 
-      title: 'Mã Thẻ', 
-      dataIndex: 'uid', 
-      key: 'uid', 
-      align: 'center', 
+    {
+      title: 'Mã Thẻ',
+      dataIndex: 'uid',
+      key: 'uid',
+      align: 'center',
       render: (val, record) => (
-        <span 
+        <span
           className="text-blue-500 font-bold cursor-pointer hover:underline"
           onClick={() => handleOpenCard(record)}
         >
           {val}
         </span>
-      ) 
+      )
     },
     { title: 'Biển Số Xe', dataIndex: 'plate', key: 'plate', align: 'center' },
     { title: 'Tổng Tiền Đã Bơm', dataIndex: 'totalMoney', key: 'totalMoney', align: 'center', render: formatNum },
@@ -104,18 +104,18 @@ export const Cards = () => {
     { title: 'Tiền Dư Còn Lại', dataIndex: 'balance', key: 'balance', align: 'center', render: formatNum },
     { title: 'Tên Công Ty', dataIndex: 'company', key: 'company', align: 'center' },
     { title: 'Ghi Chú', dataIndex: 'note', key: 'note', align: 'center' },
-    { 
-      title: 'Tải Về', 
-      key: 'action', 
-      align: 'center', 
+    {
+      title: 'Tải Về',
+      key: 'action',
+      align: 'center',
       render: (_, record) => (
-        <div 
+        <div
           className="flex justify-center items-center h-full text-blue-600 cursor-pointer"
           onClick={() => toast.success(`Đã tải về lịch sử của thẻ ${record.uid} (CSV)!`)}
         >
           <ArrowDown size={16} className="stroke-[3px] hover:scale-125 transition-transform" />
         </div>
-      ) 
+      )
     },
   ];
 
@@ -124,8 +124,8 @@ export const Cards = () => {
       <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white shadow-sm mb-4">
         <div className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2" onClick={() => navigate('/')}>Trang Chủ</div>
         <div className="flex gap-16 text-sm font-bold text-blue-800">
-          <span 
-            className="cursor-pointer hover:underline" 
+          <span
+            className="cursor-pointer hover:underline"
             onClick={() => {
               form.resetFields();
               setSettingsModalOpen(true);
@@ -133,7 +133,7 @@ export const Cards = () => {
           >
             Cài Đặt Thẻ
           </span>
-          <span 
+          <span
             className="cursor-pointer hover:underline"
             onClick={() => toast.success('Đã tải về toàn bộ lịch sử thẻ (CSV)!')}
           >
@@ -167,20 +167,20 @@ export const Cards = () => {
           <div className="flex gap-4 mb-2">
             <div className="flex-1 flex flex-col items-center">
               <span className="mb-1">Biển Số Xe</span>
-              <input 
-                type="text" 
-                placeholder="Nhập số xe..." 
-                className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" 
+              <input
+                type="text"
+                placeholder="Nhập số xe..."
+                className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal"
                 value={searchPlate}
                 onChange={(e) => setSearchPlate(e.target.value)}
               />
             </div>
             <div className="flex-1 flex flex-col items-center">
               <span className="mb-1">Tên Công Ty</span>
-              <input 
-                type="text" 
-                placeholder="Nhập tên..." 
-                className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" 
+              <input
+                type="text"
+                placeholder="Nhập tên..."
+                className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal"
                 value={searchCompany}
                 onChange={(e) => setSearchCompany(e.target.value)}
               />
@@ -245,9 +245,9 @@ export const Cards = () => {
             }}
           />
         </div>
-        
+
         <div className="text-center text-gray-500 text-[10px] mt-4 pb-4">
-          Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
+          Copyright © 2026 - Công ty DVN Technology
         </div>
       </div>
 

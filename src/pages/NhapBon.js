@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
 import { Button, Modal, Table } from 'antd';
-import { useNavigate } from 'react-router-dom';
 import { ArrowDown, Download } from 'lucide-react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const initialData = [
   { id: '1', fuel: 'E10', startMm: 807, startLit: 2968, endMm: 807, endLit: 2968, export: 0, import: '-' },
@@ -47,13 +47,13 @@ export const NhapBon = () => {
     <div className="flex flex-col bg-gray-50 min-h-screen">
       {/* Top Navigation */}
       <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white shadow-sm mb-4">
-        <div 
+        <div
           className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2"
           onClick={() => navigate('/')}
         >
           Trang Chủ
         </div>
-        <div 
+        <div
           className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pr-2"
           onClick={() => navigate('/bao-cao-bon')}
         >
@@ -65,9 +65,9 @@ export const NhapBon = () => {
         {/* Controls */}
         <div className="bg-white border border-gray-300 rounded p-2 mb-4">
           <div className="flex items-center gap-4 mb-2">
-            <Button 
-              type="primary" 
-              className="bg-[#1677ff] font-bold w-24 rounded" 
+            <Button
+              type="primary"
+              className="bg-[#1677ff] font-bold w-24 rounded"
               onClick={handleStart}
               disabled={status !== 'idle'}
             >
@@ -76,9 +76,9 @@ export const NhapBon = () => {
             <span className="font-bold text-gray-800 text-xs">{startTime}</span>
           </div>
           <div className="flex items-center gap-4">
-            <Button 
-              type="primary" 
-              className="bg-[#1677ff] font-bold w-24 rounded" 
+            <Button
+              type="primary"
+              className="bg-[#1677ff] font-bold w-24 rounded"
               onClick={handleEnd}
               disabled={status !== 'started'}
             >
@@ -94,12 +94,12 @@ export const NhapBon = () => {
             <thead>
               <tr className="bg-[#0f3460] text-white">
                 <th className="border border-gray-400 p-2 font-bold w-12" rowSpan={2}>Bồn</th>
-                <th className="border border-gray-400 p-2 font-bold w-24" rowSpan={2}>Nhiên<br/>Liệu</th>
+                <th className="border border-gray-400 p-2 font-bold w-24" rowSpan={2}>Nhiên<br />Liệu</th>
                 <th className="border border-gray-400 p-1 font-bold" colSpan={2}>Mức Đầu</th>
                 <th className="border border-gray-400 p-1 font-bold" colSpan={2}>Mức Cuối</th>
-                <th className="border border-gray-400 p-2 font-bold w-20" rowSpan={2}>Xuất<br/>(Lít)</th>
-                <th className="border border-gray-400 p-2 font-bold w-20" rowSpan={2}>Nhập<br/>(Lít)</th>
-                <th className="border border-gray-400 p-2 font-bold w-12" rowSpan={2}>Tải<br/>Về</th>
+                <th className="border border-gray-400 p-2 font-bold w-20" rowSpan={2}>Xuất<br />(Lít)</th>
+                <th className="border border-gray-400 p-2 font-bold w-20" rowSpan={2}>Nhập<br />(Lít)</th>
+                <th className="border border-gray-400 p-2 font-bold w-12" rowSpan={2}>Tải<br />Về</th>
               </tr>
               <tr className="bg-[#0f3460] text-white">
                 <th className="border border-gray-400 p-1 font-bold w-16">mm</th>
@@ -128,7 +128,7 @@ export const NhapBon = () => {
           </table>
         </div>
         <div className="text-center text-gray-500 text-[10px] mt-4">
-          Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
+          Copyright © 2026 - Công ty DVN Technology
         </div>
       </div>
 

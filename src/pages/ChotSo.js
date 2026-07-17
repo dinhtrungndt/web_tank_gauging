@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Table, Modal, Input, Button } from 'antd';
+import { Table } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
 // Dữ liệu mô phỏng cho tất cả vòi bơm
@@ -54,43 +53,43 @@ export const ChotSo = () => {
   const navigate = useNavigate();
 
   const columns = [
-    { 
-      title: 'Vòi', 
-      dataIndex: 'id', 
+    {
+      title: 'Vòi',
+      dataIndex: 'id',
       align: 'center',
       onCell: (record) => ({ rowSpan: record.rowSpan }),
     },
-    { 
-      title: 'Nhiên Liệu', 
-      dataIndex: 'fuel', 
+    {
+      title: 'Nhiên Liệu',
+      dataIndex: 'fuel',
       align: 'center',
       onCell: (record) => ({ rowSpan: record.rowSpan }),
       render: (text) => <span className={text === 'E10' ? 'text-green-600' : 'text-orange-500'}>{text}</span>
     },
-    { 
-      title: 'Serial', 
-      dataIndex: 'serial', 
+    {
+      title: 'Serial',
+      dataIndex: 'serial',
       align: 'center',
       onCell: (record) => ({ rowSpan: record.rowSpan }),
     },
-    { 
-      title: 'Tổng Số Tiền', 
-      dataIndex: 'money', 
-      align: 'center' 
+    {
+      title: 'Tổng Số Tiền',
+      dataIndex: 'money',
+      align: 'center'
     },
-    { 
-      title: 'Tổng Số Lít', 
-      dataIndex: 'lit', 
-      align: 'center' 
+    {
+      title: 'Tổng Số Lít',
+      dataIndex: 'lit',
+      align: 'center'
     },
-    { 
-      title: 'Tổng Lần Bán', 
-      dataIndex: 'lanBan', 
-      align: 'center' 
+    {
+      title: 'Tổng Lần Bán',
+      dataIndex: 'lanBan',
+      align: 'center'
     },
-    { 
-      title: 'Giá Bán Hiện Tại', 
-      dataIndex: 'price', 
+    {
+      title: 'Giá Bán Hiện Tại',
+      dataIndex: 'price',
       align: 'center',
       onCell: (record) => ({ rowSpan: record.rowSpan }),
     }
@@ -100,7 +99,7 @@ export const ChotSo = () => {
     <div className="flex flex-col bg-gray-50 min-h-screen">
       {/* Top Header */}
       <div className="flex justify-between items-center p-2 border-b-2 border-blue-900 bg-white shadow-sm mb-4">
-        <div 
+        <div
           className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2"
           onClick={() => navigate('/')}
         >
@@ -114,13 +113,13 @@ export const ChotSo = () => {
       {/* Main Table */}
       <div className="px-4">
         <div className="border border-gray-300 bg-white overflow-hidden shadow-sm">
-          <Table 
-            columns={columns} 
-            dataSource={tableData} 
-            pagination={false} 
+          <Table
+            columns={columns}
+            dataSource={tableData}
+            pagination={false}
             bordered
             size="small"
-            rowClassName={(record) => 
+            rowClassName={(record) =>
               record.isFirstRow ? "bg-white text-center text-xs" : "bg-white text-center text-xs border-b-2 border-gray-200"
             }
             components={{
@@ -131,7 +130,7 @@ export const ChotSo = () => {
           />
         </div>
         <div className="text-center text-gray-500 text-xs mt-4">
-          Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
+          Copyright © 2026 - Công ty DVN Technology
         </div>
       </div>
     </div>

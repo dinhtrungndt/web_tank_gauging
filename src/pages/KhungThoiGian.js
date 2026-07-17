@@ -1,5 +1,4 @@
-import React from 'react';
-import { Input, Button, Form } from 'antd';
+import { Button, Form, Input } from 'antd';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,7 +26,7 @@ export const KhungThoiGian = () => {
             ca2_start: '050000', ca2_end: '130000',
             ca3_start: '130000', ca3_end: '210000'
           }}>
-            
+
             <div className="p-4 border-b border-gray-200">
               <h3 className="text-[#0f3460] font-bold text-lg mb-4">CA BÁN 1</h3>
               <div className="flex justify-between items-center mb-3">
@@ -73,7 +72,7 @@ export const KhungThoiGian = () => {
           </Form>
         </div>
         <div className="text-center text-gray-500 text-xs mt-6">
-          Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
+          Copyright © 2026 - Công ty DVN Technology
         </div>
       </div>
     </div>

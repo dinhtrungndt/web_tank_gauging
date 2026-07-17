@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Button, Input, Modal, Form, Table } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Button, Form, Input, Modal, Table } from 'antd';
 import { ArrowDown, Download } from 'lucide-react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const mockCa1 = [
   { id: '1', fuel: 'E10', startMm: 403, startLit: 1106, endMm: 402, endLit: 1102, export: 4, import: 0 },
@@ -71,12 +71,12 @@ export const BaoCaoBon = () => {
           <thead>
             <tr className="bg-[#0f3460] text-white">
               <th className="border border-gray-400 p-2 font-bold w-12" rowSpan={2}>Bồn</th>
-              <th className="border border-gray-400 p-2 font-bold w-24" rowSpan={2}>Nhiên<br/>Liệu</th>
+              <th className="border border-gray-400 p-2 font-bold w-24" rowSpan={2}>Nhiên<br />Liệu</th>
               <th className="border border-gray-400 p-1 font-bold" colSpan={2}>Mức Đầu</th>
               <th className="border border-gray-400 p-1 font-bold" colSpan={2}>Mức Cuối</th>
-              <th className="border border-gray-400 p-2 font-bold w-20" rowSpan={2}>Xuất<br/>(Lít)</th>
-              <th className="border border-gray-400 p-2 font-bold w-20" rowSpan={2}>Nhập<br/>(Lít)</th>
-              <th className="border border-gray-400 p-2 font-bold w-12" rowSpan={2}>Tải<br/>Về</th>
+              <th className="border border-gray-400 p-2 font-bold w-20" rowSpan={2}>Xuất<br />(Lít)</th>
+              <th className="border border-gray-400 p-2 font-bold w-20" rowSpan={2}>Nhập<br />(Lít)</th>
+              <th className="border border-gray-400 p-2 font-bold w-12" rowSpan={2}>Tải<br />Về</th>
             </tr>
             <tr className="bg-[#0f3460] text-white">
               <th className="border border-gray-400 p-1 font-bold w-16">mm</th>
@@ -124,7 +124,7 @@ export const BaoCaoBon = () => {
     <div className="flex flex-col bg-gray-50 min-h-screen">
       {/* Top Navigation */}
       <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white shadow-sm mb-4">
-        <div 
+        <div
           className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2"
           onClick={() => navigate('/')}
         >
@@ -134,7 +134,7 @@ export const BaoCaoBon = () => {
           <span className="cursor-pointer hover:underline" onClick={() => navigate('/nhap-bon')}>Nhập Bồn</span>
           <span className="cursor-pointer hover:underline">Cài Đặt Bồn</span>
         </div>
-        <div 
+        <div
           className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pr-2"
           onClick={() => setKhungThoiGianModalOpen(true)}
         >
@@ -144,19 +144,19 @@ export const BaoCaoBon = () => {
 
       <div className="flex-1 px-2 pb-4">
         {renderTable(
-          1, mockCa1, 
+          1, mockCa1,
           { fromDate: '2026-07-15', toDate: '2026-07-16', fromTime: '21:00:00', toTime: '05:00:00' },
           { e10Export: 86, e10Import: 0, doExport: 90, doImport: 0 }
         )}
 
         {renderTable(
-          2, mockCa2, 
+          2, mockCa2,
           { fromDate: '2026-07-16', toDate: '2026-07-16', fromTime: '05:00:00', toTime: '13:00:00' },
           { e10Export: 735, e10Import: 0, doExport: 792, doImport: 0 }
         )}
 
         {renderTable(
-          3, mockCa3, 
+          3, mockCa3,
           { fromDate: '2026-07-16', toDate: '2026-07-16', fromTime: '13:00:00', toTime: '21:00:00' },
           { e10Export: 0, e10Import: 9472, doExport: 0, doImport: 4673 }
         )}
@@ -181,7 +181,7 @@ export const BaoCaoBon = () => {
         </div>
 
         <div className="text-center text-gray-500 text-[10px]">
-          Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
+          Copyright © 2026 - Công ty DVN Technology
         </div>
       </div>
 

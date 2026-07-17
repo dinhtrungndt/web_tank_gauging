@@ -8,6 +8,8 @@ import { Cards } from '../pages/Cards';
 import { Home } from '../pages/Home';
 import { ChotSo } from '../pages/ChotSo';
 import { BaoCao } from '../pages/BaoCao';
+import { DoiMatKhau } from '../pages/DoiMatKhau';
+import { KhungThoiGian } from '../pages/KhungThoiGian';
 
 function DashboardRoutes() {
   return (
@@ -18,6 +20,8 @@ function DashboardRoutes() {
         <Route path="/cards" element={<Cards />} />
         <Route path="/chot-so" element={<ChotSo />} />
         <Route path="/bao-cao" element={<BaoCao />} />
+        <Route path="/doi-mat-khau" element={<DoiMatKhau />} />
+        <Route path="/khung-thoi-gian" element={<KhungThoiGian />} />
         <Route path="/pumps" element={<Navigate to="/home" replace />} />
         <Route path="/tanks" element={<Navigate to="/home" replace />} />
       </Routes>

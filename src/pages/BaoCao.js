@@ -1,6 +1,7 @@
 import React from 'react';
-import { Table, Input, Button } from 'antd';
+import { Input, Button, Form, Table, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const generateMockDataForShift = (shiftMultiplier) => {
   const pumps = [];
@@ -161,19 +162,19 @@ const ShiftTable = ({ title, shiftMultiplier, buttonColor }) => {
         <div className="flex items-center gap-2 flex-1">
           <div className="flex-1 flex flex-col items-center">
             <span className="text-[10px] text-gray-600 font-bold mb-1">Từ Ngày</span>
-            <Input size="small" defaultValue="150726" className="text-center" />
+            <input type="date" defaultValue="2026-07-15" className="w-full text-center text-xs border border-gray-300 rounded px-2 py-1 outline-none focus:border-blue-500" />
           </div>
           <div className="flex-1 flex flex-col items-center">
             <span className="text-[10px] text-gray-600 font-bold mb-1">Đến Ngày</span>
-            <Input size="small" defaultValue="160726" className="text-center" />
+            <input type="date" defaultValue="2026-07-16" className="w-full text-center text-xs border border-gray-300 rounded px-2 py-1 outline-none focus:border-blue-500" />
           </div>
           <div className="flex-1 flex flex-col items-center">
             <span className="text-[10px] text-gray-600 font-bold mb-1">Từ Giờ</span>
-            <Input size="small" defaultValue={shiftMultiplier === 1 ? "210000" : shiftMultiplier === 2 ? "050000" : "130000"} className="text-center" />
+            <input type="time" step="1" defaultValue={shiftMultiplier === 1 ? "21:00:00" : shiftMultiplier === 2 ? "05:00:00" : "13:00:00"} className="w-full text-center text-xs border border-gray-300 rounded px-2 py-1 outline-none focus:border-blue-500" />
           </div>
           <div className="flex-1 flex flex-col items-center">
             <span className="text-[10px] text-gray-600 font-bold mb-1">Đến Giờ</span>
-            <Input size="small" defaultValue={shiftMultiplier === 1 ? "050000" : shiftMultiplier === 2 ? "130000" : "210000"} className="text-center" />
+            <input type="time" step="1" defaultValue={shiftMultiplier === 1 ? "05:00:00" : shiftMultiplier === 2 ? "13:00:00" : "21:00:00"} className="w-full text-center text-xs border border-gray-300 rounded px-2 py-1 outline-none focus:border-blue-500" />
           </div>
         </div>
       </div>
@@ -201,6 +202,13 @@ const ShiftTable = ({ title, shiftMultiplier, buttonColor }) => {
 
 export const BaoCao = () => {
   const navigate = useNavigate();
+  const [khungThoiGianModalOpen, setKhungThoiGianModalOpen] = React.useState(false);
+  const [form] = Form.useForm();
+
+  const handleSaveKhungThoiGian = (values) => {
+    toast.success('Lưu cài đặt thành công!');
+    setKhungThoiGianModalOpen(false);
+  };
 
   return (
     <div className="flex flex-col bg-gray-50 min-h-screen">
@@ -212,13 +220,13 @@ export const BaoCao = () => {
         >
           Trang Chủ
         </div>
-        <div className="flex flex-col items-center">
-          <h1 className="text-red-600 font-bold text-lg uppercase mb-0">Cửa Hàng Xăng Dầu MONTECH</h1>
-          <div className="text-[10px] text-gray-800 font-medium">51 Trần Thị Trọng - Phường Tân Sơn - Tp. Hồ Chí Minh</div>
-          <div className="text-[10px] font-bold text-blue-800 mt-1">16/07/2026 20:16:46</div>
-          <div className="text-[10px] font-bold text-green-600">Đang Kết Nối 2</div>
+        <div className="flex flex-col items-center flex-1">
+          {/* Empty spacer since AppLayout handles the global header */}
         </div>
-        <div className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pr-2">
+        <div 
+          className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pr-2"
+          onClick={() => setKhungThoiGianModalOpen(true)}
+        >
           Khung Thời Gian
         </div>
       </div>
@@ -254,6 +262,66 @@ export const BaoCao = () => {
           Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
         </div>
       </div>
+
+      {/* Modal Khung Thời Gian */}
+      <Modal
+        title={<div className="text-xl font-bold text-[#0f3460] text-center mb-2">Cài Đặt Khung Thời Gian</div>}
+        open={khungThoiGianModalOpen}
+        onCancel={() => setKhungThoiGianModalOpen(false)}
+        footer={null}
+        width={500}
+        className="dark:bg-gray-800"
+      >
+        <Form form={form} layout="horizontal" onFinish={handleSaveKhungThoiGian} initialValues={{
+          ca1_start: '210000', ca1_end: '050000',
+          ca2_start: '050000', ca2_end: '130000',
+          ca3_start: '130000', ca3_end: '210000'
+        }}>
+          
+          <div className="py-2 border-b border-gray-200">
+            <h3 className="text-[#0f3460] font-bold text-lg mb-4">CA BÁN 1</h3>
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-gray-700">Bắt đầu (hhmmss)</span>
+              <Form.Item name="ca1_start" noStyle><Input className="w-40 text-center font-bold" /></Form.Item>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-700">Kết thúc (hhmmss)</span>
+              <Form.Item name="ca1_end" noStyle><Input className="w-40 text-center font-bold" /></Form.Item>
+            </div>
+          </div>
+
+          <div className="py-2 border-b border-gray-200 mt-2">
+            <h3 className="text-[#0f3460] font-bold text-lg mb-4">CA BÁN 2</h3>
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-gray-700">Bắt đầu (hhmmss)</span>
+              <Form.Item name="ca2_start" noStyle><Input className="w-40 text-center font-bold" /></Form.Item>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-700">Kết thúc (hhmmss)</span>
+              <Form.Item name="ca2_end" noStyle><Input className="w-40 text-center font-bold" /></Form.Item>
+            </div>
+          </div>
+
+          <div className="py-2 mt-2">
+            <h3 className="text-[#0f3460] font-bold text-lg mb-4">CA BÁN 3</h3>
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-gray-700">Bắt đầu (hhmmss)</span>
+              <Form.Item name="ca3_start" noStyle><Input className="w-40 text-center font-bold" /></Form.Item>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-700">Kết thúc (hhmmss)</span>
+              <Form.Item name="ca3_end" noStyle><Input className="w-40 text-center font-bold" /></Form.Item>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 p-4 border-t border-gray-200 flex flex-col items-center mt-4">
+            <p className="text-xs text-gray-500 mb-4">Nhập thời gian theo định dạng <strong>hhmmss</strong>, ví dụ <strong>060000</strong> là 06:00:00.</p>
+            <Button type="primary" htmlType="submit" className="w-full bg-[#1677ff] h-10 text-base font-bold rounded">
+              Lưu Cài Đặt
+            </Button>
+          </div>
+        </Form>
+      </Modal>
     </div>
   );
 };

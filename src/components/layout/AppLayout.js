@@ -45,7 +45,7 @@ export const AppLayout = ({ children }) => {
             <span>{time.toLocaleDateString('en-GB')} {time.toLocaleTimeString('en-GB')}</span>
           </div>
           <div className="text-xs font-bold text-green-600 mt-0.5">
-            Đang Kết Nối 1
+            {location.pathname === '/bao-cao' ? 'Đang Kết Nối 2' : 'Đang Kết Nối 1'}
           </div>
         </div>
 

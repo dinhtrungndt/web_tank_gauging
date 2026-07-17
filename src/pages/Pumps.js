@@ -4,28 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 
-// Mock data with status: 'idle' (chưa nhận cò), 'lifted' (đã nhận cò), 'pumping' (đang đổ)
-const initialPumps = Array.from({ length: 14 }).map((_, i) => {
-  let status = 'idle';
-  if (i === 1 || i === 4 || i === 7 || i === 9) status = 'pumping';
-  else if (i === 2 || i === 5 || i === 8) status = 'lifted';
-
-  const price = i % 2 === 0 ? 21590 : 20810;
-  // Khởi tạo một chút tiền/lít cho các máy đang hoạt động
-  const volume = status !== 'idle' ? (Math.random() * 5 + 1) : 0;
-  const money = volume * price;
-
-  return {
-    id: `MT${(i + 1).toString().padStart(4, '0')}`,
-    fuelType: i % 2 === 0 ? 'Dầu Điêzen 0,05S Mức 2' : 'Xăng E10 RON95 Mức 3',
-    money: money,
-    volume: volume,
-    price: price,
-    status: status,
-    totalMoney: 25496900 + i * 1234567,
-    totalCount: 17 + i * 5,
-  };
-});
+const initialPumps = [
+  { id: 'MT0001', fuelType: 'E10', money: 20000, volume: 0.973, price: 20550, status: 'idle', serial: 113, totalMoney: 25496900, totalCount: 17 },
+  { id: 'MT0002', fuelType: 'E10', money: 60000, volume: 2.919, price: 20550, status: 'idle', serial: 114, totalMoney: 26731467, totalCount: 22 },
+  { id: 'MT0003', fuelType: 'E10', money: 50000, volume: 2.433, price: 20550, status: 'idle', serial: 89, totalMoney: 27966034, totalCount: 27 },
+  { id: 'MT0004', fuelType: 'DO_II', money: 1600000, volume: 68.610, price: 23320, status: 'idle', serial: 111, totalMoney: 29200601, totalCount: 32 },
+];
 
 const PumpCard = ({ pump, onOpenDetails }) => {
   // Determine colors based on status
@@ -93,28 +77,18 @@ export const Pumps = ({ isDashboard }) => {
   const [pumps, setPumps] = useState(initialPumps);
   const [authModal, setAuthModal] = useState({ open: false, action: null });
   const [detailsModal, setDetailsModal] = useState({ open: false, pump: null });
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [form] = Form.useForm();
+  const [pwdForm] = Form.useForm();
 
   // Filtering state
   const [searchText, setSearchText] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [fuelFilter, setFuelFilter] = useState('all');
 
-  // Simulate real-time pumping
+  // Bỏ realtime mô phỏng theo yêu cầu
   useEffect(() => {
-    const interval = setInterval(() => {
-      setPumps(prev => prev.map(p => {
-        if (p.status === 'pumping') {
-          return {
-            ...p,
-            volume: p.volume + 0.11,
-            money: p.money + (0.11 * p.price)
-          };
-        }
-        return p;
-      }));
-    }, 200);
-    return () => clearInterval(interval);
+    // Không cần chạy interval cập nhật số liệu liên tục nữa
   }, []);
 
   const handleAuthSubmit = (values) => {
@@ -133,6 +107,20 @@ export const Pumps = ({ isDashboard }) => {
     } else {
       toast.error('Sai mật khẩu!');
     }
+  };
+
+  const handlePasswordChange = (values) => {
+    if (values.oldPassword !== '1234') {
+      toast.error('Mật khẩu cũ không chính xác!');
+      return;
+    }
+    if (values.newPassword !== values.confirmPassword) {
+      toast.error('Mật khẩu mới không khớp!');
+      return;
+    }
+    toast.success('Đổi mật khẩu thành công!');
+    setPasswordModalOpen(false);
+    pwdForm.resetFields();
   };
 
   const filteredPumps = useMemo(() => {
@@ -198,13 +186,49 @@ export const Pumps = ({ isDashboard }) => {
         />
       </div>
 
-      {/* Pumps Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-10 gap-2 p-3 bg-gray-200 dark:bg-gray-800/50 rounded-lg">
-        {filteredPumps.map(pump => (
-          <PumpCard key={pump.id} pump={pump} onOpenDetails={setDetailsModal} />
-        ))}
+      {/* Pumps Table */}
+      <div className="bg-white rounded border border-gray-300 shadow-sm overflow-hidden">
+        <h3 className="text-blue-900 font-bold text-sm uppercase px-2 py-1 border-b border-gray-300 bg-gray-50">
+          TRỤ BƠM
+        </h3>
+        <Table 
+          dataSource={filteredPumps.map((pump, index) => ({ ...pump, key: pump.id, idNum: index + 1 }))}
+          pagination={false}
+          size="small"
+          bordered
+          columns={[
+            { title: 'Vòi', dataIndex: 'idNum', align: 'center' },
+            { 
+              title: 'Nhiên Liệu', dataIndex: 'fuelType', align: 'center',
+              render: text => <span className={`font-bold ${text.includes('E10') ? 'text-green-600' : 'text-orange-500'}`}>{text.includes('E10') ? 'E10' : 'DO_II'}</span>
+            },
+            { title: 'Số Tiền', dataIndex: 'money', align: 'center', render: val => val.toLocaleString('vi-VN') },
+            { title: 'Số Lít', dataIndex: 'volume', align: 'center', render: val => val.toFixed(3).replace('.', ',') },
+            { title: 'Đơn Giá', dataIndex: 'price', align: 'center', render: val => val.toLocaleString('vi-VN') },
+            { title: 'Serial', dataIndex: 'serial', align: 'center' },
+            { title: 'Kết Nối', key: 'connect', align: 'center', render: () => <div className="w-3 h-3 bg-green-500 rounded-full mx-auto" /> },
+            { title: 'Trạng Thái', dataIndex: 'status', align: 'center', render: () => 'Đang chờ' },
+            { 
+              title: 'Chi Tiết', key: 'action', align: 'center',
+              render: (_, record) => (
+                <span 
+                  className="text-blue-600 font-bold cursor-pointer hover:underline"
+                  onClick={() => setDetailsModal({ open: true, pump: record })}
+                >
+                  Xem
+                </span>
+              )
+            }
+          ]}
+          components={{
+            header: {
+              cell: (props) => <th {...props} className="bg-[#0f3460] text-white text-center text-xs font-bold" />
+            }
+          }}
+          rowClassName="bg-white text-center text-xs"
+        />
         {filteredPumps.length === 0 && (
-          <div className="col-span-full py-8 text-center text-gray-500 dark:text-gray-400">
+          <div className="py-8 text-center text-gray-500 dark:text-gray-400">
             Không tìm thấy trụ bơm nào phù hợp với bộ lọc.
           </div>
         )}
@@ -228,7 +252,7 @@ export const Pumps = ({ isDashboard }) => {
               <div className="flex gap-8">
                 <span className="cursor-pointer hover:underline" onClick={() => setAuthModal({ open: true, action: 'bao-cao' })}>Báo Cáo</span>
                 <span className="cursor-pointer hover:underline" onClick={() => setAuthModal({ open: true, action: 'chot-so' })}>Chốt Số</span>
-                <span className="cursor-pointer hover:underline">Đổi Mật Khẩu</span>
+                <span className="cursor-pointer hover:underline" onClick={() => setPasswordModalOpen(true)}>Đổi Mật Khẩu</span>
               </div>
               <span className="cursor-pointer hover:underline">Restart</span>
             </div>
@@ -323,6 +347,43 @@ export const Pumps = ({ isDashboard }) => {
             <Button type="primary" htmlType="submit" className="bg-blue-600">Xác Nhận</Button>
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* Modal Đổi Mật Khẩu */}
+      <Modal
+        title={<div className="text-xl font-bold text-[#0f3460] text-center mb-2">Đổi Mật Khẩu Đăng Nhập</div>}
+        open={passwordModalOpen}
+        onCancel={() => { setPasswordModalOpen(false); pwdForm.resetFields(); }}
+        footer={null}
+        width={450}
+        className="dark:bg-gray-800"
+      >
+        <Form form={pwdForm} layout="vertical" onFinish={handlePasswordChange}>
+          <div className="flex items-center justify-between mb-4 border border-gray-300 rounded p-2">
+            <span className="text-[#0f3460] font-bold w-1/2">Mật khẩu cũ</span>
+            <Form.Item name="oldPassword" noStyle rules={[{ required: true, message: 'Nhập mật khẩu cũ' }]}>
+              <Input.Password className="w-1/2 border-gray-300" />
+            </Form.Item>
+          </div>
+          <div className="flex items-center justify-between mb-4 border border-gray-300 rounded p-2">
+            <span className="text-[#0f3460] font-bold w-1/2">Mật khẩu mới</span>
+            <Form.Item name="newPassword" noStyle rules={[{ required: true, message: 'Nhập mật khẩu mới' }]}>
+              <Input.Password className="w-1/2 border-gray-300" />
+            </Form.Item>
+          </div>
+          <div className="flex items-center justify-between mb-6 border border-gray-300 rounded p-2">
+            <span className="text-[#0f3460] font-bold w-1/2">Nhập lại mật khẩu mới</span>
+            <Form.Item name="confirmPassword" noStyle rules={[{ required: true, message: 'Xác nhận mật khẩu' }]}>
+              <Input.Password className="w-1/2 border-gray-300" />
+            </Form.Item>
+          </div>
+          <Button type="primary" htmlType="submit" className="w-full bg-[#1677ff] h-12 text-lg font-bold rounded-md">
+            Lưu
+          </Button>
+        </Form>
+        <div className="text-center text-gray-500 text-xs mt-6">
+          Copyright © 2026 - Công ty TNHH Kỹ Thuật Mon
+        </div>
       </Modal>
     </div>
   );

@@ -1,6 +1,6 @@
 import { Button, Modal, Table } from 'antd';
 import { ArrowDown, Download } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,13 +17,27 @@ export const NhapBon = () => {
   const [data, setData] = useState(initialData);
   const [status, setStatus] = useState('idle'); // idle -> started -> ended
   const [startTime, setStartTime] = useState(null);
+  const [startTimeDate, setStartTimeDate] = useState(null);
   const [endTime, setEndTime] = useState(null);
+  const [elapsed, setElapsed] = useState(0);
   const [logModal, setLogModal] = useState({ open: false, tankId: null });
+
+  useEffect(() => {
+    let interval;
+    if (status === 'started' && startTimeDate) {
+      interval = setInterval(() => {
+        setElapsed(Math.floor((new Date() - startTimeDate) / 1000));
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [status, startTimeDate]);
 
   const handleStart = () => {
     setStatus('started');
     const now = new Date();
     setStartTime(`${now.toLocaleDateString('en-GB')} ${now.toLocaleTimeString('en-GB')}`);
+    setStartTimeDate(now);
+    setElapsed(0);
     toast.success('Đã bắt đầu ghi nhận dữ liệu nhập bồn.');
   };
 
@@ -37,6 +51,14 @@ export const NhapBon = () => {
       return p;
     }));
     toast.success('Đã kết thúc nhập bồn và chốt số liệu!');
+  };
+
+  const formatElapsed = (seconds) => {
+    if (status === 'idle') return '';
+    const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${h}:${m}:${s}`;
   };
 
   const handleDownloadCsv = () => {
@@ -73,7 +95,10 @@ export const NhapBon = () => {
             >
               BẮT ĐẦU
             </Button>
-            <span className="font-bold text-gray-800 text-xs">{startTime}</span>
+            <div className="flex gap-4 items-center">
+              <span className="font-bold text-gray-800 dark:text-gray-200 text-xs">{startTime}</span>
+              {status === 'started' && <span className="font-bold text-blue-600 dark:text-blue-400 animate-pulse text-xs">Đang nhập: {formatElapsed(elapsed)}</span>}
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <Button
@@ -84,7 +109,10 @@ export const NhapBon = () => {
             >
               KẾT THÚC
             </Button>
-            <span className="font-bold text-gray-800 text-xs">{endTime}</span>
+            <div className="flex gap-4 items-center">
+              <span className="font-bold text-gray-800 dark:text-gray-200 text-xs">{endTime}</span>
+              {status === 'ended' && <span className="font-bold text-green-600 text-xs">Tổng thời gian: {formatElapsed(elapsed)}</span>}
+            </div>
           </div>
         </div>
 

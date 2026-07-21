@@ -76,7 +76,7 @@ export const Home = () => {
             size="small"
             scroll={{ x: 'max-content' }}
             bordered
-            rowClassName="text-center text-xs"
+            rowClassName="text-center text-xs bg-white dark:bg-gray-800 dark:text-gray-200"
             components={{
               header: {
                 cell: (props) => <th {...props} className="bg-blue-900 text-white text-center text-xs font-bold" />

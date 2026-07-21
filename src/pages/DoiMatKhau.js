@@ -20,8 +20,8 @@ export const DoiMatKhau = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-50 min-h-screen p-4">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full max-w-md p-6">
+    <div className="flex flex-col items-center justify-center bg-gray-50 dark:bg-[#0b1120] min-h-screen p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 w-full max-w-md p-6">
         <h2 className="text-xl font-bold text-[#0f3460] text-center mb-6">Đổi Mật Khẩu Đăng Nhập</h2>
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <div className="flex items-center justify-between mb-4 border border-gray-300 rounded p-2">

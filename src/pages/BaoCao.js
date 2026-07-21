@@ -106,14 +106,14 @@ const ShiftTable = ({ title, shiftMultiplier, buttonColor }) => {
   const summary = (pageData) => {
     return (
       <Table.Summary>
-        <Table.Summary.Row className="bg-white font-bold text-orange-500 text-xs">
+        <Table.Summary.Row className="bg-white dark:bg-gray-800 font-bold text-orange-500 text-xs">
           <Table.Summary.Cell index={0} colSpan={4} align="center">Tổng DO:</Table.Summary.Cell>
           <Table.Summary.Cell index={1} align="center">1.500.000</Table.Summary.Cell>
           <Table.Summary.Cell index={2} colSpan={2} />
           <Table.Summary.Cell index={3} align="center">60.000</Table.Summary.Cell>
           <Table.Summary.Cell index={4} />
         </Table.Summary.Row>
-        <Table.Summary.Row className="bg-white font-bold text-orange-500 text-xs border-b border-gray-200">
+        <Table.Summary.Row className="bg-white dark:bg-gray-800 font-bold text-orange-500 text-xs border-b border-gray-200 dark:border-gray-700">
           <Table.Summary.Cell index={0} colSpan={4} align="center"></Table.Summary.Cell>
           <Table.Summary.Cell index={1} align="center">1.500.000</Table.Summary.Cell>
           <Table.Summary.Cell index={2} colSpan={2} />
@@ -121,14 +121,14 @@ const ShiftTable = ({ title, shiftMultiplier, buttonColor }) => {
           <Table.Summary.Cell index={4} />
         </Table.Summary.Row>
 
-        <Table.Summary.Row className="bg-white font-bold text-green-600 text-xs">
-          <Table.Summary.Cell index={0} colSpan={4} align="center">Tổng E10:</Table.Summary.Cell>
+        <Table.Summary.Row className="bg-white dark:bg-gray-800 font-bold text-green-600 text-xs">
+          <Table.Summary.Cell index={0} colSpan={4} align="center">Tổng {title.toLowerCase()}:</Table.Summary.Cell>
           <Table.Summary.Cell index={1} align="center">4.500.000</Table.Summary.Cell>
           <Table.Summary.Cell index={2} colSpan={2} />
           <Table.Summary.Cell index={3} align="center">180.000</Table.Summary.Cell>
           <Table.Summary.Cell index={4} />
         </Table.Summary.Row>
-        <Table.Summary.Row className="bg-white font-bold text-green-600 text-xs border-b border-gray-200">
+        <Table.Summary.Row className="bg-white dark:bg-gray-800 font-bold text-green-600 text-xs border-b border-gray-200 dark:border-gray-700">
           <Table.Summary.Cell index={0} colSpan={4} align="center"></Table.Summary.Cell>
           <Table.Summary.Cell index={1} align="center">4.500.000</Table.Summary.Cell>
           <Table.Summary.Cell index={2} colSpan={2} />
@@ -136,14 +136,14 @@ const ShiftTable = ({ title, shiftMultiplier, buttonColor }) => {
           <Table.Summary.Cell index={4} />
         </Table.Summary.Row>
 
-        <Table.Summary.Row className="bg-white font-bold text-blue-800 text-xs">
+        <Table.Summary.Row className="bg-white dark:bg-gray-800 font-bold text-blue-800 dark:text-blue-400 text-xs">
           <Table.Summary.Cell index={0} colSpan={4} align="center">Tổng {title.toLowerCase()}:</Table.Summary.Cell>
           <Table.Summary.Cell index={1} align="center">6.000.000</Table.Summary.Cell>
           <Table.Summary.Cell index={2} colSpan={2} />
           <Table.Summary.Cell index={3} align="center">240.000</Table.Summary.Cell>
           <Table.Summary.Cell index={4} />
         </Table.Summary.Row>
-        <Table.Summary.Row className="bg-white font-bold text-blue-800 text-xs border-b border-gray-200">
+        <Table.Summary.Row className="bg-white dark:bg-gray-800 font-bold text-blue-800 dark:text-blue-400 text-xs border-b border-gray-200 dark:border-gray-700">
           <Table.Summary.Cell index={0} colSpan={4} align="center"></Table.Summary.Cell>
           <Table.Summary.Cell index={1} align="center">6.000.000</Table.Summary.Cell>
           <Table.Summary.Cell index={2} colSpan={2} />
@@ -155,9 +155,9 @@ const ShiftTable = ({ title, shiftMultiplier, buttonColor }) => {
   };
 
   return (
-    <div className="mb-8 border border-gray-300 rounded shadow-sm bg-white overflow-hidden">
+    <div className="mb-8 border border-gray-300 dark:border-gray-700 rounded shadow-sm bg-white dark:bg-gray-800 overflow-hidden">
       {/* Search Header for Shift */}
-      <div className="flex items-center gap-2 p-2 border-b border-gray-200 bg-gray-50">
+      <div className="flex items-center gap-2 p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
         <Button type="primary" className={`${buttonColor} border-none font-bold min-w-[120px]`}>{title}</Button>
         <div className="flex items-center gap-2 flex-1">
           <div className="flex-1 flex flex-col items-center">
@@ -187,7 +187,7 @@ const ShiftTable = ({ title, shiftMultiplier, buttonColor }) => {
         bordered
         size="small"
         rowClassName={(record) =>
-          record.isFirstRow ? "bg-white text-center text-xs" : "bg-white text-center text-xs border-b-2 border-gray-200"
+          record.isFirstRow ? "bg-white dark:bg-gray-800 text-center text-xs dark:text-gray-200" : "bg-white dark:bg-gray-800 text-center text-xs dark:text-gray-200 border-b-2 border-gray-200 dark:border-gray-700"
         }
         components={{
           header: {
@@ -211,9 +211,9 @@ export const BaoCao = () => {
   };
 
   return (
-    <div className="flex flex-col bg-gray-50 min-h-screen">
+    <div className="flex flex-col bg-gray-50 dark:bg-[#0b1120] min-h-screen">
       {/* Top Header */}
-      <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white shadow-sm mb-4">
+      <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white dark:bg-gray-800 shadow-sm mb-4">
         <div
           className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2"
           onClick={() => navigate('/')}
@@ -238,8 +238,8 @@ export const BaoCao = () => {
         <ShiftTable title="CA BÁN 3" shiftMultiplier={3} buttonColor="bg-blue-600" />
 
         {/* Global Summary */}
-        <div className="bg-white border border-gray-300 rounded shadow-sm overflow-hidden mt-4 mb-8">
-          <div className="text-center py-2 bg-gray-50 border-b border-gray-200 font-bold text-red-500">
+        <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded shadow-sm overflow-hidden mt-4 mb-8">
+          <div className="text-center py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 font-bold text-red-500">
             Tổng Trạm
           </div>
           <div className="flex flex-col text-xs">
@@ -314,7 +314,7 @@ export const BaoCao = () => {
             </div>
           </div>
 
-          <div className="bg-gray-50 p-4 border-t border-gray-200 flex flex-col items-center mt-4">
+          <div className="bg-gray-50 dark:bg-gray-800 p-4 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center mt-4">
             <p className="text-xs text-gray-500 mb-4">Nhập thời gian theo định dạng <strong>hhmmss</strong>, ví dụ <strong>060000</strong> là 06:00:00.</p>
             <Button type="primary" htmlType="submit" className="w-full bg-[#1677ff] h-10 text-base font-bold rounded">
               Lưu Cài Đặt

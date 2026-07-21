@@ -208,7 +208,7 @@ export const Pumps = ({ isDashboard }) => {
       </div>
 
       {/* Pumps Table */}
-      <div className="bg-white rounded border border-gray-300 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-700 shadow-sm overflow-hidden">
         <Table
           dataSource={filteredPumps.map((pump, index) => ({ ...pump, key: pump.id, idNum: index + 1 }))}
           pagination={false}
@@ -243,7 +243,7 @@ export const Pumps = ({ isDashboard }) => {
               cell: (props) => <th {...props} className="bg-[#0f3460] text-white text-center text-xs font-bold" />
             }
           }}
-          rowClassName="bg-white text-center text-xs"
+          rowClassName="bg-white dark:bg-gray-800 text-center text-xs dark:text-gray-200"
         />
         {filteredPumps.length === 0 && (
           <div className="py-8 text-center text-gray-500 dark:text-gray-400">

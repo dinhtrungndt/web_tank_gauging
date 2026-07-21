@@ -44,9 +44,9 @@ export const NhapBon = () => {
   };
 
   return (
-    <div className="flex flex-col bg-gray-50 min-h-screen">
+    <div className="flex flex-col bg-gray-50 dark:bg-[#0b1120] min-h-screen">
       {/* Top Navigation */}
-      <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white shadow-sm mb-4">
+      <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white dark:bg-gray-800 shadow-sm mb-4">
         <div
           className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2"
           onClick={() => navigate('/')}
@@ -63,7 +63,7 @@ export const NhapBon = () => {
 
       <div className="flex-1 px-4 pb-4">
         {/* Controls */}
-        <div className="bg-white border border-gray-300 rounded p-2 mb-4">
+        <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-2 mb-4">
           <div className="flex items-center gap-4 mb-2">
             <Button
               type="primary"
@@ -89,7 +89,7 @@ export const NhapBon = () => {
         </div>
 
         {/* Table */}
-        <div className="bg-white border border-gray-300 rounded overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded overflow-hidden">
           <table className="w-full text-xs text-center border-collapse">
             <thead>
               <tr className="bg-[#0f3460] text-white">
@@ -110,15 +110,15 @@ export const NhapBon = () => {
             </thead>
             <tbody>
               {data.map((row) => (
-                <tr key={row.id} className="border-b border-gray-200">
-                  <td className="p-2">{row.id}</td>
+                <tr key={row.id} className="border-b border-gray-200 dark:border-gray-700">
+                  <td className="p-2 dark:text-gray-200">{row.id}</td>
                   <td className={`p-2 font-bold ${row.fuel === 'E10' ? 'text-green-600' : 'text-orange-500'}`}>{row.fuel}</td>
-                  <td className="p-2">{formatNum(row.startMm)}</td>
-                  <td className="p-2">{formatNum(row.startLit)}</td>
-                  <td className="p-2">{formatNum(row.endMm)}</td>
-                  <td className="p-2">{formatNum(row.endLit)}</td>
-                  <td className="p-2 font-bold">{formatNum(row.export)}</td>
-                  <td className="p-2 font-bold">{formatNum(row.import)}</td>
+                  <td className="p-2 dark:text-gray-200">{formatNum(row.startMm)}</td>
+                  <td className="p-2 dark:text-gray-200">{formatNum(row.startLit)}</td>
+                  <td className="p-2 dark:text-gray-200">{formatNum(row.endMm)}</td>
+                  <td className="p-2 dark:text-gray-200">{formatNum(row.endLit)}</td>
+                  <td className="p-2 font-bold dark:text-gray-200">{formatNum(row.export)}</td>
+                  <td className="p-2 font-bold dark:text-gray-200">{formatNum(row.import)}</td>
                   <td className="p-2 cursor-pointer text-blue-600 flex justify-center items-center h-full pt-3" onClick={() => setLogModal({ open: true, tankId: row.id })}>
                     <ArrowDown size={14} className="font-bold stroke-[3px] hover:scale-125 transition-transform" />
                   </td>

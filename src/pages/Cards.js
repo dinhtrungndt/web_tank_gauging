@@ -120,8 +120,8 @@ export const Cards = () => {
   ];
 
   return (
-    <div className="flex flex-col bg-gray-50 min-h-screen">
-      <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white shadow-sm mb-4">
+    <div className="flex flex-col bg-gray-50 dark:bg-[#0b1120] min-h-screen">
+      <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white dark:bg-gray-800 shadow-sm mb-4">
         <div className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2" onClick={() => navigate('/')}>Trang Chủ</div>
         <div className="flex gap-16 text-sm font-bold text-blue-800">
           <span
@@ -190,7 +190,7 @@ export const Cards = () => {
         </div>
 
         {/* Tables */}
-        <div className="bg-white border border-gray-200 rounded">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded overflow-hidden pb-4">
           <div className="text-red-500 font-bold p-2 text-sm">THẺ TRẢ TRƯỚC</div>
           <Table
             columns={columns}
@@ -198,7 +198,7 @@ export const Cards = () => {
             pagination={false}
             size="small"
             bordered
-            rowClassName="text-xs"
+            rowClassName="text-xs bg-white dark:bg-gray-800 dark:text-gray-200"
             components={{ header: { cell: (props) => <th {...props} className="bg-[#0f3460] text-white text-xs font-normal" /> } }}
             summary={(pageData) => {
               let totalMoney = 0; let totalVol = 0; let totalTopup = 0; let totalBal = 0;
@@ -206,7 +206,7 @@ export const Cards = () => {
                 totalMoney += m; totalVol += v; totalTopup += t; totalBal += b;
               });
               return (
-                <Table.Summary.Row className="font-bold text-xs">
+                <Table.Summary.Row className="font-bold text-xs bg-gray-50 dark:bg-gray-800 dark:text-gray-200">
                   <Table.Summary.Cell index={0} colSpan={3} align="right">Tổng:</Table.Summary.Cell>
                   <Table.Summary.Cell index={1} align="center">{formatNum(totalMoney)}</Table.Summary.Cell>
                   <Table.Summary.Cell index={2} align="center">{formatVol(totalVol)}</Table.Summary.Cell>
@@ -225,7 +225,7 @@ export const Cards = () => {
             pagination={false}
             size="small"
             bordered
-            rowClassName="text-xs"
+            rowClassName="text-xs bg-white dark:bg-gray-800 dark:text-gray-200"
             components={{ header: { cell: (props) => <th {...props} className="bg-[#0f3460] text-white text-xs font-normal" /> } }}
             summary={(pageData) => {
               let totalMoney = 0; let totalVol = 0; let totalTopup = 0; let totalBal = 0;
@@ -233,7 +233,7 @@ export const Cards = () => {
                 totalMoney += m; totalVol += v; totalTopup += t; totalBal += b;
               });
               return (
-                <Table.Summary.Row className="font-bold text-xs">
+                <Table.Summary.Row className="font-bold text-xs bg-gray-50 dark:bg-gray-800 dark:text-gray-200">
                   <Table.Summary.Cell index={0} colSpan={3} align="right">Tổng:</Table.Summary.Cell>
                   <Table.Summary.Cell index={1} align="center">{formatNum(totalMoney)}</Table.Summary.Cell>
                   <Table.Summary.Cell index={2} align="center">{formatVol(totalVol)}</Table.Summary.Cell>

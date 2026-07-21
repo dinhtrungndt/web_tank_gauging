@@ -96,9 +96,9 @@ export const ChotSo = () => {
   ];
 
   return (
-    <div className="flex flex-col bg-gray-50 min-h-screen">
+    <div className="flex flex-col bg-gray-50 dark:bg-[#0b1120] min-h-screen">
       {/* Top Header */}
-      <div className="flex justify-between items-center p-2 border-b-2 border-blue-900 bg-white shadow-sm mb-4">
+      <div className="flex justify-between items-center p-2 border-b-2 border-blue-900 bg-white dark:bg-gray-800 shadow-sm mb-4">
         <div
           className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2"
           onClick={() => navigate('/')}
@@ -112,7 +112,7 @@ export const ChotSo = () => {
 
       {/* Main Table */}
       <div className="px-4">
-        <div className="border border-gray-300 bg-white overflow-hidden shadow-sm">
+        <div className="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden shadow-sm">
           <Table
             columns={columns}
             dataSource={tableData}
@@ -120,7 +120,7 @@ export const ChotSo = () => {
             bordered
             size="small"
             rowClassName={(record) =>
-              record.isFirstRow ? "bg-white text-center text-xs" : "bg-white text-center text-xs border-b-2 border-gray-200"
+              record.isFirstRow ? "bg-white dark:bg-gray-800 text-center text-xs dark:text-gray-200" : "bg-white dark:bg-gray-800 text-center text-xs dark:text-gray-200 border-b-2 border-gray-200 dark:border-gray-700"
             }
             components={{
               header: {

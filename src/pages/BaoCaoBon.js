@@ -66,7 +66,7 @@ export const BaoCaoBon = () => {
         </div>
       </div>
 
-      <div className="bg-white border border-gray-300 rounded overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded overflow-hidden">
         <table className="w-full text-xs text-center border-collapse">
           <thead>
             <tr className="bg-[#0f3460] text-white">
@@ -87,28 +87,28 @@ export const BaoCaoBon = () => {
           </thead>
           <tbody>
             {data.map((row) => (
-              <tr key={row.id} className="border-b border-gray-200">
-                <td className="p-2">{row.id}</td>
+              <tr key={row.id} className="border-b border-gray-200 dark:border-gray-700">
+                <td className="p-2 dark:text-gray-200">{row.id}</td>
                 <td className={`p-2 font-bold ${row.fuel === 'E10' ? 'text-green-600' : 'text-orange-500'}`}>{row.fuel}</td>
-                <td className="p-2">{formatNum(row.startMm)}</td>
-                <td className="p-2">{formatNum(row.startLit)}</td>
-                <td className="p-2">{formatNum(row.endMm)}</td>
-                <td className="p-2">{formatNum(row.endLit)}</td>
-                <td className="p-2 font-bold">{formatNum(row.export)}</td>
-                <td className="p-2 font-bold">{formatNum(row.import)}</td>
+                <td className="p-2 dark:text-gray-200">{formatNum(row.startMm)}</td>
+                <td className="p-2 dark:text-gray-200">{formatNum(row.startLit)}</td>
+                <td className="p-2 dark:text-gray-200">{formatNum(row.endMm)}</td>
+                <td className="p-2 dark:text-gray-200">{formatNum(row.endLit)}</td>
+                <td className="p-2 font-bold dark:text-gray-200">{formatNum(row.export)}</td>
+                <td className="p-2 font-bold dark:text-gray-200">{formatNum(row.import)}</td>
                 <td className="p-2 cursor-pointer text-blue-600 flex justify-center items-center h-full pt-3" onClick={() => setLogModal({ open: true, tankId: row.id })}>
                   <ArrowDown size={14} className="font-bold stroke-[3px] hover:scale-125 transition-transform" />
                 </td>
               </tr>
             ))}
             {/* Sums row */}
-            <tr className="border-b border-gray-200 bg-white">
+            <tr className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <td colSpan={6} className="p-2 text-right font-bold text-green-600">Tổng Lượng E10:</td>
               <td className="p-2 font-bold text-green-600">{formatNum(sums.e10Export)}</td>
               <td className="p-2 font-bold text-green-600">{formatNum(sums.e10Import)}</td>
               <td></td>
             </tr>
-            <tr className="bg-white">
+            <tr className="bg-white dark:bg-gray-800">
               <td colSpan={6} className="p-2 text-right font-bold text-orange-500">Tổng Lượng DO_II:</td>
               <td className="p-2 font-bold text-orange-500">{formatNum(sums.doExport)}</td>
               <td className="p-2 font-bold text-orange-500">{formatNum(sums.doImport)}</td>
@@ -121,9 +121,9 @@ export const BaoCaoBon = () => {
   );
 
   return (
-    <div className="flex flex-col bg-gray-50 min-h-screen">
+    <div className="flex flex-col bg-gray-50 dark:bg-[#0b1120] min-h-screen">
       {/* Top Navigation */}
-      <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white shadow-sm mb-4">
+      <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white dark:bg-gray-800 shadow-sm mb-4">
         <div
           className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2"
           onClick={() => navigate('/')}
@@ -162,7 +162,7 @@ export const BaoCaoBon = () => {
         )}
 
         {/* Global Sum */}
-        <div className="bg-white border border-gray-300 rounded p-2 mb-4 text-xs font-bold text-center">
+        <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-2 mb-4 text-xs font-bold text-center">
           <div className="text-red-500 uppercase mb-2">TỔNG TRẠM</div>
           <div className="flex justify-center gap-16 mb-2">
             <span className="text-green-600 w-32 text-right">Tổng Lượng E10:</span>
@@ -232,7 +232,7 @@ export const BaoCaoBon = () => {
               <Form.Item name="ca3_end" noStyle><Input className="w-40 text-center font-bold" /></Form.Item>
             </div>
           </div>
-          <div className="bg-gray-50 p-4 border-t border-gray-200 flex flex-col items-center mt-4">
+          <div className="bg-gray-50 dark:bg-gray-800 p-4 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center mt-4">
             <p className="text-xs text-gray-500 mb-4">Nhập thời gian theo định dạng <strong>hhmmss</strong>, ví dụ <strong>060000</strong> là 06:00:00.</p>
             <Button type="primary" htmlType="submit" className="w-full bg-[#1677ff] h-10 text-base font-bold rounded">
               Lưu Cài Đặt

@@ -12,15 +12,15 @@ export const KhungThoiGian = () => {
   };
 
   return (
-    <div className="flex flex-col bg-gray-50 min-h-screen">
+    <div className="flex flex-col bg-gray-50 dark:bg-[#0b1120] min-h-screen">
       {/* Top Header */}
-      <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white shadow-sm mb-6">
+      <div className="flex justify-between items-center p-2 border-b-2 border-[#0f3460] bg-white dark:bg-gray-800 shadow-sm mb-6">
         <div className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pl-2" onClick={() => navigate('/')}>Trang Chủ</div>
         <div className="text-sm font-bold text-blue-800 cursor-pointer hover:underline pr-2" onClick={() => navigate('/bao-cao')}>Báo Cáo Vòi</div>
       </div>
 
       <div className="flex-1 flex flex-col items-center px-4 pb-8">
-        <div className="bg-white rounded shadow-sm w-full max-w-lg border border-gray-200 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded shadow-sm w-full max-w-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
           <Form form={form} layout="horizontal" onFinish={onFinish} initialValues={{
             ca1_start: '210000', ca1_end: '050000',
             ca2_start: '050000', ca2_end: '130000',
@@ -63,7 +63,7 @@ export const KhungThoiGian = () => {
               </div>
             </div>
 
-            <div className="bg-gray-50 p-4 border-t border-gray-200 flex flex-col items-center">
+            <div className="bg-gray-50 dark:bg-gray-800 p-4 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center">
               <p className="text-xs text-gray-500 mb-4">Nhập thời gian theo định dạng <strong>hhmmss</strong>, ví dụ <strong>060000</strong> là 06:00:00.</p>
               <Button type="primary" htmlType="submit" className="w-full bg-[#1677ff] h-10 text-base font-bold rounded">
                 Lưu Cài Đặt

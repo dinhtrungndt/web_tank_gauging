@@ -120,7 +120,11 @@ export const Tanks = ({ isDashboard = false }) => {
       {!stations.length && <div className="rounded border p-6 text-center text-gray-500">Chưa có trạm/khu vực được gán.</div>}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {tanks.map(tank => (
-          <TankCard key={tank.id} tank={tank} onDetails={() => navigate(`/bao-cao-bon?tankId=${tank.id}`)} />
+          <TankCard
+            key={tank.id}
+            tank={tank}
+            onDetails={() => navigate(`/tanks/${tank.id}`, { state: { tank } })}
+          />
         ))}
       </div>
       {stationId && !tanks.length && <div className="rounded border p-6 text-center text-gray-500">Trạm chưa có bồn hoặc chưa có dữ liệu.</div>}

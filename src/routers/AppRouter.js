@@ -12,6 +12,7 @@ import { DoiMatKhau } from '../pages/DoiMatKhau';
 import { KhungThoiGian } from '../pages/KhungThoiGian';
 import { BaoCaoBon } from '../pages/BaoCaoBon';
 import { NhapBon } from '../pages/NhapBon';
+import { TankDetail } from '../pages/TankDetail';
 
 function DashboardRoutes() {
   return (
@@ -26,6 +27,7 @@ function DashboardRoutes() {
         <Route path="/nhap-bon" element={<NhapBon />} />
         <Route path="/doi-mat-khau" element={<DoiMatKhau />} />
         <Route path="/khung-thoi-gian" element={<KhungThoiGian />} />
+        <Route path="/tanks/:tankId" element={<TankDetail />} />
         <Route path="/pumps" element={<Navigate to="/home" replace />} />
         <Route path="/tanks" element={<Navigate to="/home" replace />} />
       </Routes>

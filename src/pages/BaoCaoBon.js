@@ -1,8 +1,8 @@
 import { Button, Form, Input, Modal, Table } from 'antd';
 import { ArrowDown, Download } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { reportService } from '../services/report.service';
 
 const mockCa1 = [
@@ -25,11 +25,62 @@ const mockCa3 = [
 
 const formatNum = (num) => num.toLocaleString('vi-VN');
 
+const shiftTimes = [
+  { fromTime: '21:00:00', toTime: '05:00:00' },
+  { fromTime: '05:00:00', toTime: '13:00:00' },
+  { fromTime: '13:00:00', toTime: '21:00:00' }
+];
+
+const buildRowsForShift = (readings, shiftIndex, tank) => {
+  if (!readings.length) return [];
+  const size = Math.ceil(readings.length / 3);
+  const shiftReadings = readings.slice(shiftIndex * size, (shiftIndex + 1) * size);
+  if (!shiftReadings.length) return [];
+  const start = shiftReadings[0];
+  const end = shiftReadings[shiftReadings.length - 1];
+  const difference = Number(start.volumeLit || 0) - Number(end.volumeLit || 0);
+  return [{
+    id: tank?.tankCode || `Bồn ${tank?.id || ''}`,
+    tankId: tank?.id,
+    fuel: tank?.fuelType || 'N/A',
+    startMm: start.heightMm,
+    startLit: Math.round(start.volumeLit),
+    endMm: end.heightMm,
+    endLit: Math.round(end.volumeLit),
+    export: Math.max(0, Math.round(difference)),
+    import: Math.max(0, Math.round(-difference))
+  }];
+};
+
 export const BaoCaoBon = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const selectedTankId = searchParams.get('tankId');
+  const selectedTank = location.state?.tank;
   const [khungThoiGianModalOpen, setKhungThoiGianModalOpen] = useState(false);
   const [logModal, setLogModal] = useState({ open: false, tankId: null });
+  const [selectedReport, setSelectedReport] = useState(null);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (!selectedTankId) return undefined;
+    const to = new Date();
+    const from = new Date(to.getTime() - 24 * 60 * 60 * 1000);
+    reportService.getTankReport(selectedTankId, from.toISOString(), to.toISOString())
+      .then(result => setSelectedReport(result.data))
+      .catch(error => toast.error(error.message));
+    return undefined;
+  }, [selectedTankId]);
+
+  const reportRows = useMemo(() => (
+    selectedTankId && selectedReport
+      ? [0, 1, 2].map(shiftIndex => buildRowsForShift(selectedReport.readings || [], shiftIndex, {
+        ...selectedTank,
+        id: selectedTankId
+      }))
+      : null
+  ), [selectedReport, selectedTank, selectedTankId]);
 
   const handleSaveKhungThoiGian = () => {
     toast.success('Lưu cài đặt thành công!');
@@ -110,7 +161,7 @@ export const BaoCaoBon = () => {
                 <td className="p-2 dark:text-gray-200">{formatNum(row.endLit)}</td>
                 <td className="p-2 font-bold dark:text-gray-200">{formatNum(row.export)}</td>
                 <td className="p-2 font-bold dark:text-gray-200">{formatNum(row.import)}</td>
-                <td className="p-2 cursor-pointer text-blue-600 flex justify-center items-center h-full pt-3" onClick={() => setLogModal({ open: true, tankId: row.id })}>
+                <td className="p-2 cursor-pointer text-blue-600 flex justify-center items-center h-full pt-3" onClick={() => setLogModal({ open: true, tankId: row.tankId || row.id })}>
                   <ArrowDown size={14} className="font-bold stroke-[3px] hover:scale-125 transition-transform" />
                 </td>
               </tr>
@@ -157,23 +208,25 @@ export const BaoCaoBon = () => {
       </div>
 
       <div className="flex-1 px-2 pb-4">
-        {renderTable(
-          1, mockCa1,
-          { fromDate: '2026-07-15', toDate: '2026-07-16', fromTime: '21:00:00', toTime: '05:00:00' },
-          { e10Export: 86, e10Import: 0, doExport: 90, doImport: 0 }
-        )}
-
-        {renderTable(
-          2, mockCa2,
-          { fromDate: '2026-07-16', toDate: '2026-07-16', fromTime: '05:00:00', toTime: '13:00:00' },
-          { e10Export: 735, e10Import: 0, doExport: 792, doImport: 0 }
-        )}
-
-        {renderTable(
-          3, mockCa3,
-          { fromDate: '2026-07-16', toDate: '2026-07-16', fromTime: '13:00:00', toTime: '21:00:00' },
-          { e10Export: 0, e10Import: 9472, doExport: 0, doImport: 4673 }
-        )}
+        {(reportRows || [mockCa1, mockCa2, mockCa3]).map((rows, index) => {
+          const e10 = rows.filter(row => row.fuel.includes('E10'));
+          const other = rows.filter(row => !row.fuel.includes('E10'));
+          return renderTable(
+            index + 1,
+            rows,
+            {
+              fromDate: new Date().toISOString().slice(0, 10),
+              toDate: new Date().toISOString().slice(0, 10),
+              ...shiftTimes[index]
+            },
+            {
+              e10Export: e10.reduce((sum, row) => sum + row.export, 0),
+              e10Import: e10.reduce((sum, row) => sum + row.import, 0),
+              doExport: other.reduce((sum, row) => sum + row.export, 0),
+              doImport: other.reduce((sum, row) => sum + row.import, 0)
+            }
+          );
+        })}
 
         {/* Global Sum */}
         <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-2 mb-4 text-xs font-bold text-center">

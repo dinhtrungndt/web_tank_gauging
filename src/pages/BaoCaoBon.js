@@ -3,6 +3,7 @@ import { ArrowDown, Download } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { reportService } from '../services/report.service';
 
 const mockCa1 = [
   { id: '1', fuel: 'E10', startMm: 403, startLit: 1106, endMm: 402, endLit: 1102, export: 4, import: 0 },
@@ -35,8 +36,21 @@ export const BaoCaoBon = () => {
     setKhungThoiGianModalOpen(false);
   };
 
-  const handleDownloadCsv = () => {
-    toast.success(`Đã tải về file nhat_ky_bon_${logModal.tankId}.csv`);
+  const handleDownloadCsv = async () => {
+    try {
+      const to = new Date();
+      const from = new Date(to.getTime() - 24 * 60 * 60 * 1000);
+      const blob = await reportService.downloadExcel(logModal.tankId, from.toISOString(), to.toISOString());
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `bao-cao-bon-${logModal.tankId}.xlsx`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      toast.success('Đã tải báo cáo Excel');
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   const renderTable = (caNum, data, datesAndTimes, sums) => (

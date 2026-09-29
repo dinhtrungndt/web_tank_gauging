@@ -4,12 +4,10 @@ import { User, Lock, Fuel } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, useLocation, Navigate } from 'react-router-dom';
-import { useTheme } from 'next-themes';
 
 export const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { theme } = useTheme();
   const { isAuthenticated, login } = useAuth();
   const location = useLocation();
 
@@ -20,19 +18,17 @@ export const Login = () => {
     return <Navigate to={from} replace />;
   }
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     setLoading(true);
-    // Simulate network request
-    setTimeout(() => {
-      if (values.username === 'admin' && values.password === 'admin') {
+    try {
+      await login(values.identifier, values.password);
         toast.success('Đăng nhập thành công!');
-        login('fake-jwt-token-12345');
         navigate(from, { replace: true });
-      } else {
-        toast.error('Sai tên đăng nhập hoặc mật khẩu!');
-      }
+    } catch (error) {
+      toast.error(error.message || 'Đăng nhập thất bại');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -62,12 +58,12 @@ export const Login = () => {
           className="w-full"
         >
           <Form.Item
-            name="username"
-            rules={[{ required: true, message: 'Vui lòng nhập tên người dùng!' }]}
+            name="identifier"
+            rules={[{ required: true, message: 'Vui lòng nhập username hoặc email!' }]}
           >
             <Input 
               prefix={<User size={18} className="text-gray-400" />} 
-              placeholder="Tên người dùng (admin)" 
+              placeholder="Username hoặc email đăng nhập"
               className="rounded-lg bg-gray-50/50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700 hover:border-blue-500 focus:border-blue-500 dark:text-white transition-colors"
             />
           </Form.Item>
@@ -78,7 +74,7 @@ export const Login = () => {
           >
             <Input.Password
               prefix={<Lock size={18} className="text-gray-400" />}
-              placeholder="Mật khẩu (admin)"
+              placeholder="Mật khẩu"
               className="rounded-lg bg-gray-50/50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700 hover:border-blue-500 focus:border-blue-500 dark:text-white transition-colors"
             />
           </Form.Item>

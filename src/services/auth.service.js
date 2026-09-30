@@ -6,5 +6,10 @@ export const authService = {
     body: JSON.stringify({ identifier, password })
   }),
   me: () => request('/auth/me'),
-  logout: () => request('/auth/logout', { method: 'POST' })
+  logout: () => request('/auth/logout', { method: 'POST' }),
+  getProfile: () => request('/users/profile'),
+  updateProfile: (data) => request('/users/profile', {
+    method: 'PUT',
+    body: JSON.stringify(data)
+  })
 };

@@ -44,6 +44,9 @@ export const AppLayout = ({ children }) => {
           {location.pathname !== '/' && location.pathname !== '/home' && (
             <Button type="link" onClick={() => navigate('/')} className="mr-2 p-0 font-bold">Về Trang Chủ</Button>
           )}
+          <Button type="link" onClick={() => navigate('/cau-hinh-tai-khoan')} className="mr-2 p-0 font-bold">
+            Cấu hình tài khoản
+          </Button>
           <Button 
             type="text" 
             icon={<LogOut size={16} />} 

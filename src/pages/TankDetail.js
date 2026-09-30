@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { reportService } from '../services/report.service';
+import { authService } from '../services/auth.service';
 
 const toInputValue = (date) => {
   const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
@@ -85,6 +86,10 @@ export const TankDetail = () => {
   }, [from, tankId, to]);
 
   useEffect(() => { loadReport(); }, [loadReport]);
+  useEffect(() => {
+    if (!emailModalOpen) return;
+    authService.getProfile().then(({ data }) => setRecipient(data.email || '')).catch(() => {});
+  }, [emailModalOpen]);
 
   const readings = report?.readings || [];
   const alerts = report?.alerts || [];
@@ -176,7 +181,7 @@ export const TankDetail = () => {
         cancelText="Hủy"
         confirmLoading={sendingEmail}
       >
-        <p className="text-sm text-gray-500">Nhập địa chỉ email nhận báo cáo bồn trong khoảng thời gian đã chọn.</p>
+        <p className="text-sm text-gray-500">Email mặc định lấy từ cấu hình tài khoản; bạn có thể đổi nơi nhận cho lần gửi này.</p>
         <Input
           value={recipient}
           onChange={event => setRecipient(event.target.value)}

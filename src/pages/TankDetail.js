@@ -1,4 +1,4 @@
-import { Button, Spin } from 'antd';
+import { Button, Input, Modal, Spin } from 'antd';
 import { ArrowLeft, Download, FileBarChart, RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -68,6 +68,9 @@ export const TankDetail = () => {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [recipient, setRecipient] = useState('');
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   const loadReport = useCallback(async () => {
     setLoading(true);
@@ -107,12 +110,33 @@ export const TankDetail = () => {
     }
   };
 
+  const sendEmail = async () => {
+    setSendingEmail(true);
+    try {
+      await reportService.sendEmail(
+        tankId,
+        new Date(from).toISOString(),
+        new Date(to).toISOString(),
+        recipient,
+        tankName
+      );
+      toast.success('Đã gửi báo cáo qua email');
+      setEmailModalOpen(false);
+      setRecipient('');
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Button icon={<ArrowLeft size={16} />} onClick={() => navigate(-1)}>Quay lại</Button>
         <div className="flex gap-2">
           <Button icon={<FileBarChart size={16} />} onClick={() => navigate(`/bao-cao-bon?tankId=${tankId}`, { state: { tank } })}>Báo cáo ca</Button>
+          <Button onClick={() => setEmailModalOpen(true)}>Gửi email</Button>
           <Button type="primary" icon={<Download size={16} />} loading={downloading} onClick={downloadExcel}>Xuất Excel</Button>
         </div>
       </div>
@@ -143,6 +167,24 @@ export const TankDetail = () => {
           {latest && <div className="text-xs text-gray-500">Lần đo gần nhất: {formatDate(latest.measuredAt)}</div>}
         </>
       )}
+      <Modal
+        title="Gửi báo cáo qua email"
+        open={emailModalOpen}
+        onCancel={() => setEmailModalOpen(false)}
+        onOk={sendEmail}
+        okText="Gửi báo cáo"
+        cancelText="Hủy"
+        confirmLoading={sendingEmail}
+      >
+        <p className="text-sm text-gray-500">Nhập địa chỉ email nhận báo cáo bồn trong khoảng thời gian đã chọn.</p>
+        <Input
+          value={recipient}
+          onChange={event => setRecipient(event.target.value)}
+          placeholder="example@domain.com"
+          type="email"
+          onPressEnter={sendEmail}
+        />
+      </Modal>
     </div>
   );
 };

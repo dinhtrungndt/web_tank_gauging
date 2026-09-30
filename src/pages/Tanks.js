@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { stationService } from '../services/station.service';
 import { tankService } from '../services/tank.service';
+import { realtimeService } from '../services/realtime.service';
 
 const formatNumber = (value, digits = 0) =>
   Number(value || 0).toLocaleString('vi-VN', {
@@ -99,8 +100,27 @@ export const Tanks = ({ isDashboard = false }) => {
   useEffect(() => {
     if (!stationId) return undefined;
     loadTanks().catch(error => toast.error(error.message));
-    const timer = setInterval(() => loadTanks().catch(() => {}), 10000);
-    return () => clearInterval(timer);
+    const unsubscribe = realtimeService.subscribe('tank_updated', update => {
+      if (!update?.tank_id) return;
+      setTanks(current => current.map(tank => (
+        String(tank.id) === String(update.tank_id)
+          ? normalizeTank({
+            ...tank,
+            currentHeight: update.height_mm,
+            currentWater: update.water_mm,
+            currentTemp: update.temp,
+            currentVolumeLit: update.volume_lit
+          })
+          : tank
+      )));
+    });
+    const timer = setInterval(() => loadTanks().catch(error => {
+      console.error('[Tank polling fallback failed]', error);
+    }), 30000);
+    return () => {
+      unsubscribe();
+      clearInterval(timer);
+    };
   }, [stationId]);
 
   const stationOptions = useMemo(() => stations.map(station => ({

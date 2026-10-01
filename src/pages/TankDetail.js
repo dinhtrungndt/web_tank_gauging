@@ -18,6 +18,19 @@ const formatNumber = (value, digits = 1) => Number(value || 0).toLocaleString('v
 
 const formatDate = (value) => value ? new Date(value).toLocaleString('vi-VN') : '-';
 
+const getReportRange = (fromValue, toValue) => {
+  const fromDate = new Date(fromValue);
+  const toDate = new Date(toValue);
+  if (fromValue.slice(0, 10) === toValue.slice(0, 10)) {
+    fromDate.setHours(0, 0, 0, 0);
+    toDate.setHours(23, 59, 59, 999);
+  }
+  return {
+    from: fromDate.toISOString(),
+    to: toDate.toISOString()
+  };
+};
+
 const HistoryChart = ({ readings }) => {
   if (!readings.length) {
     return <div className="flex h-64 items-center justify-center text-sm text-gray-500">Chưa có dữ liệu đo trong khoảng thời gian này.</div>;
@@ -76,7 +89,8 @@ export const TankDetail = () => {
   const loadReport = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await reportService.getTankReport(tankId, new Date(from).toISOString(), new Date(to).toISOString());
+      const range = getReportRange(from, to);
+      const result = await reportService.getTankReport(tankId, range.from, range.to);
       setReport(result.data);
     } catch (error) {
       toast.error(error.message);
@@ -100,7 +114,8 @@ export const TankDetail = () => {
   const downloadExcel = async () => {
     setDownloading(true);
     try {
-      const blob = await reportService.downloadExcel(tankId, new Date(from).toISOString(), new Date(to).toISOString());
+      const range = getReportRange(from, to);
+      const blob = await reportService.downloadExcel(tankId, range.from, range.to);
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement('a');
       anchor.href = url;
@@ -118,10 +133,11 @@ export const TankDetail = () => {
   const sendEmail = async () => {
     setSendingEmail(true);
     try {
+      const range = getReportRange(from, to);
       await reportService.sendEmail(
         tankId,
-        new Date(from).toISOString(),
-        new Date(to).toISOString(),
+        range.from,
+        range.to,
         recipient,
         tankName
       );

@@ -31,6 +31,12 @@ const getReportRange = (fromValue, toValue) => {
   };
 };
 
+const getExcelFileDate = (fromValue, toValue) => {
+  const fromDate = fromValue.slice(0, 10);
+  const toDate = toValue.slice(0, 10);
+  return fromDate === toDate ? fromDate : `${fromDate}-den-${toDate}`;
+};
+
 const HistoryChart = ({ readings }) => {
   if (!readings.length) {
     return <div className="flex h-64 items-center justify-center text-sm text-gray-500">Chưa có dữ liệu đo trong khoảng thời gian này.</div>;
@@ -119,7 +125,7 @@ export const TankDetail = () => {
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement('a');
       anchor.href = url;
-      anchor.download = `bao-cao-bon-${tankId}.xlsx`;
+      anchor.download = `bao-cao-bon-${tankId}-${getExcelFileDate(from, to)}.xlsx`;
       anchor.click();
       URL.revokeObjectURL(url);
       toast.success('Đã tải báo cáo Excel');

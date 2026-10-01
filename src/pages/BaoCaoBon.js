@@ -95,7 +95,7 @@ export const BaoCaoBon = () => {
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement('a');
       anchor.href = url;
-      anchor.download = `bao-cao-bon-${logModal.tankId}.xlsx`;
+      anchor.download = `bao-cao-bon-${logModal.tankId}-${from.toISOString().slice(0, 10)}-den-${to.toISOString().slice(0, 10)}.xlsx`;
       anchor.click();
       URL.revokeObjectURL(url);
       toast.success('Đã tải báo cáo Excel');

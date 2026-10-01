@@ -149,19 +149,19 @@ export const Cards = () => {
           <div className="flex gap-4 mb-2">
             <div className="flex-1 flex flex-col items-center">
               <span className="mb-1">Từ Ngày</span>
-              <input type="text" defaultValue="160726" className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
+              <input type="date" className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
             </div>
             <div className="flex-1 flex flex-col items-center">
               <span className="mb-1">Đến Ngày</span>
-              <input type="text" defaultValue="160726" className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
+              <input type="date" className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
             </div>
             <div className="flex-1 flex flex-col items-center">
               <span className="mb-1">Từ Giờ</span>
-              <input type="text" defaultValue="000000" className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
+              <input type="time" step="1" className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
             </div>
             <div className="flex-1 flex flex-col items-center">
               <span className="mb-1">Đến Giờ</span>
-              <input type="text" defaultValue="235959" className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
+              <input type="time" step="1" className="w-full text-center border border-gray-300 rounded p-1 outline-none font-normal" />
             </div>
           </div>
           <div className="flex gap-4 mb-2">

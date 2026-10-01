@@ -77,7 +77,7 @@ export const TankDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const tank = location.state?.tank;
-  const [from, setFrom] = useState(() => toInputValue(new Date(Date.now() - 24 * 60 * 60 * 1000)));
+  const [from, setFrom] = useState(() => toInputValue(new Date()));
   const [to, setTo] = useState(() => toInputValue(new Date()));
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);

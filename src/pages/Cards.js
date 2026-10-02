@@ -81,6 +81,29 @@ export const Cards = () => {
     setSettingsModalOpen(true);
   };
 
+  const handleDownloadCardCSV = (record) => {
+    try {
+      const headers = ['STT', 'Ma_The', 'Bien_So_Xe', 'Tong_Tien_Da_Bom', 'Tong_Lit_Da_Bom', 'Tong_Tien_Nap_The', 'Tien_Du_Con_Lai', 'Ten_Cong_Ty', 'Ghi_Chu'];
+      let dataToExport = record ? [record] : [...filteredPrepaid, ...filteredPostpaid];
+      
+      const csvRows = dataToExport.map((r, index) => {
+        return `${index + 1},${r.uid},${r.plate},${r.totalMoney},${r.totalVol},${r.totalTopup},${r.balance},${r.company || ''},${r.note || ''}`;
+      });
+      
+      const csvData = [headers.join(','), ...csvRows].join('\n');
+      const blob = new Blob(['\uFEFF' + csvData], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = record ? `lich-su-the-${record.uid}.csv` : 'toan-bo-lich-su-the.csv';
+      anchor.click();
+      URL.revokeObjectURL(url);
+      toast.success(record ? `Đã tải CSV thẻ ${record.uid}` : 'Đã tải toàn bộ lịch sử thẻ (CSV)');
+    } catch (error) {
+      toast.error('Lỗi khi tải file CSV!');
+    }
+  };
+
   const columns = [
     { title: 'STT', dataIndex: 'id', key: 'id', align: 'center', width: 60 },
     {
@@ -111,7 +134,7 @@ export const Cards = () => {
       render: (_, record) => (
         <div
           className="flex justify-center items-center h-full text-blue-600 cursor-pointer"
-          onClick={() => toast.success(`Đã tải về lịch sử của thẻ ${record.uid} (CSV)!`)}
+          onClick={() => handleDownloadCardCSV(record)}
         >
           <ArrowDown size={16} className="stroke-[3px] hover:scale-125 transition-transform" />
         </div>
@@ -135,7 +158,7 @@ export const Cards = () => {
           </span>
           <span
             className="cursor-pointer hover:underline"
-            onClick={() => toast.success('Đã tải về toàn bộ lịch sử thẻ (CSV)!')}
+            onClick={() => handleDownloadCardCSV(null)}
           >
             Tải File
           </span>

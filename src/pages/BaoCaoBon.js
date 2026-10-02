@@ -104,6 +104,27 @@ export const BaoCaoBon = () => {
     }
   };
 
+  const handleDownloadCsvRow = (row, caNum) => {
+    try {
+      const headers = ['Bon', 'Nhien_Lieu', 'Muc_Dau_mm', 'Muc_Dau_Lit', 'Muc_Cuoi_mm', 'Muc_Cuoi_Lit', 'Xuat_Lit', 'Nhap_Lit'];
+      const csvData = [
+        headers.join(','),
+        `${row.id},${row.fuel},${row.startMm},${row.startLit},${row.endMm},${row.endLit},${row.export},${row.import}`
+      ].join('\n');
+      
+      const blob = new Blob(['\uFEFF' + csvData], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `bao-cao-bon-${row.id}-ca-${caNum}.csv`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      toast.success(`Đã tải CSV Bồn ${row.id} - Ca ${caNum}`);
+    } catch (error) {
+      toast.error('Lỗi tải file CSV: ' + error.message);
+    }
+  };
+
   const renderTable = (caNum, data, datesAndTimes, sums) => (
     <div className="mb-4">
       {/* Date/Time Headers */}
@@ -161,7 +182,7 @@ export const BaoCaoBon = () => {
                 <td className="p-2 dark:text-gray-200">{formatNum(row.endLit)}</td>
                 <td className="p-2 font-bold dark:text-gray-200">{formatNum(row.export)}</td>
                 <td className="p-2 font-bold dark:text-gray-200">{formatNum(row.import)}</td>
-                <td className="p-2 cursor-pointer text-blue-600 flex justify-center items-center h-full pt-3" onClick={() => setLogModal({ open: true, tankId: row.tankId || row.id })}>
+                <td className="p-2 cursor-pointer text-blue-600 flex justify-center items-center h-full pt-3" onClick={() => handleDownloadCsvRow(row, caNum)}>
                   <ArrowDown size={14} className="font-bold stroke-[3px] hover:scale-125 transition-transform" />
                 </td>
               </tr>
